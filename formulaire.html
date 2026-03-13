@@ -162,10 +162,10 @@
             <select id="secteur" required onchange="filtrerEcoles()">
               <option value="">-- Sélectionner --</option>
               <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
-              <option>BRETAGNE</option><option>BRULE</option>
-              <option>CENTRE VILLE</option><option>CAMELIAS</option>
+              <option>BRETAGNE</option><option>BRÛLÉ</option>
+              <option>CENTRE VILLE</option><option>CAMÉLIAS</option>
               <option>CHAUDRON</option><option>DOMENJOD</option>
-              <option>MONTAGNE 15ème</option><option>MONTAGNE 8ème</option>
+              <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
               <option>MONTGAILLARD</option><option>MOUFIA</option>
               <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇOIS</option>
               <option>SAINTE CLOTILDE</option><option>SOURCE</option>
@@ -274,22 +274,22 @@ const SUPABASE_URL='https://clakdvjcytmtubenprux.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0';
 
 const ECOLES={
-  'BELLEPIERRE':['Prim. Appl. Bellepierre'],
-  'BOIS DE NÈFLES':['Elém. Bois de Nèfles','Mat. Bois de Nèfles','Prim. Pit. B. de Nèfles'],
-  'BRETAGNE':['Elém. Bancouliers','Mat. Bancouliers'],
-  'BRULE':['Brûlé','BRULE Centre de lecture'],
-  'CENTRE VILLE':['Elém. Centrale','Mat. Centrale','Prim. Ancien Théatre','Elém. Bringelliers','Prim. Grand Canal','Elém. Damase Legros','Mat. Damase Legros','Prim. Eudoxie Nonge','Prim. Les Affouches','Prim. Maxime Laope'],
-  'CAMELIAS':['Elém. Les Camélias','Mat. Les Camélias'],
-  'CHAUDRON':['Elém. Champ Fleuri','Mat. Champ-Fleuri'],
-  'DOMENJOD':['Elém. Domenjod'],
-  'MONTAGNE 15ème':['Mat. 15è St Bernard','Elém. St-Bernard'],
-  'MONTAGNE 8ème':['Mat. 8è Philip. Vinson','Elém. Philip Vinson'],
-  'MONTGAILLARD':['Mat. Montgaillard','Elém. Alain Lorraine','Mat. Les Flamboyants'],
-  'MOUFIA':['Elém. Appli.Léon Dierx','Mat. Débussy','Elém. J.Reydellet A','Elém. J.Reydellet B','Mat. H. Lebert','Elém. H. Lebert','Mat. Françoise Mollard'],
-  'RIVIÈRE / PETITE ÎLE':['Mat. Petite ile','Mat. Riviere 2','Prim. Baies Roses'],
-  'SAINT FRANÇOIS':['Elém. St-François PK7','Mat.Saint François PK7','Prim. Eglantines'],
-  'SAINTE CLOTILDE':['Elém. Les Lilas','Mat. Les Jacarandas','Elém. Badamiers','Mat. Aurore','Elém. Candide Azéma A','Elém. Candide Azéma B','Elém. G. Macé','Elém. H. Dunant','Elém. Les Tamarins','Mat. Les Tamarins','Elém. Raymond Mondon','Elém. Les Topazes','Prim. Phil. Commerson','Prim. Bory Saint Vincent','Prim. La Chaumière','Prim. Primat','Prim JB Bossard','Mat. Cocotiers','Mat. Bouvet','Mat. Gisèle. Calmy','Mat. Michel Debré','Elem. Michel Debré','Mat. Providence','Mat. Rubis','Mat. Ylang Ylang','Elém. Ruisseau Blanc','Mat. Ruisseau Blanc'],
-  'SOURCE':['Mat. Source','Elém. Ruisseau Blanc','Mat. Ruisseau Blanc','Annexe Tulipiers','Mat. Tulipiers']
+  'BELLEPIERRE':['Elém. Les Topazes','Mat. Rubis','Prim. Appl. Bellepierre'],
+  'BOIS DE NÈFLES':['Elém. Bois de Nèfles','Elém. Bringelliers','Mat. Bois de Nèfles','Prim. Pit. B. de Nèfles'],
+  'BRETAGNE':['Mat. Aurore','Prim. Bory Saint Vincent','Prim. Grand Canal','Prim. Maxime Laope','Prim. Phil. Commerson'],
+  'BRÛLÉ':['Brûlé'],
+  'CENTRE VILLE':['Elém. Appli. Léon Dierx','Elém. Centrale','Elém. Joinville','Mat. Centrale','Mat. Gisèle Calmy','Mat. Les Flamboyants','Prim. Ancien Théatre'],
+  'CAMÉLIAS':['Elém. Les Camélias','Elém. Raymond Mondon','Mat. Les Camélias','Mat. Providence'],
+  'CHAUDRON':['Elém. Badamiers','Elém. Champ Fleuri','Elém. Damase Legros','Elém. H. Lebert','Elem. Michel Debré','Mat. Champ-Fleuri','Mat. Damase Legros','Mat. H. Lebert','Mat. Michel Debré','Prim. Primat'],
+  'DOMENJOD':['Elém. Domenjod','Mat. Cocotiers'],
+  'MONTAGNE 15ÈME':['Elém. St-Bernard','Mat. 15è St Bernard','Prim. Les Affouches'],
+  'MONTAGNE 8ÈME':['Elém. Philip Vinson','Elém. Ruisseau Blanc','Mat. 8è Philip. Vinson','Mat. Ruisseau Blanc'],
+  'MONTGAILLARD':['Elém. Alain Lorraine','Elém. Candide Azéma A','Elém. Candide Azéma B','Elém. H. Dunant','Mat. Bouvet','Mat. Françoise Mollard','Mat. Les Flamboyants','Mat. Montgaillard','Prim. La Chaumière'],
+  'MOUFIA':['Annexe Tulipiers','Elém. Bancouliers','Elém. Baies Roses','Mat. Bancouliers','Mat. Baies Roses','Mat. Tulipiers','Prim. Baies Roses','Prim. Eglantines'],
+  'RIVIÈRE / PETITE ÎLE':['Elém. J.Reydellet A','Elém. J.Reydellet B','Mat. Petite Île','Mat. Rivière 2','Mat. Ylang Ylang'],
+  'SAINT FRANÇOIS':['Elém. St-François PK7','Mat. Saint François PK7'],
+  'SAINTE CLOTILDE':['Elém. Champ Fleuri','Elém. Les Lilas','Elém. Les Tamarins','Mat. Champ-Fleuri','Mat. Débussy','Mat. Les Jacarandas','Mat. Les Tamarins','Prim. JB Bossard'],
+  'SOURCE':['Elém. G. Macé','Mat. Source']
 };
 
 function filtrerEcoles(){
