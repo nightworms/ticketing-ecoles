@@ -6,14 +6,7 @@
 <title>Signalement maintenance — Écoles Saint-Denis</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
-  :root {
-    --bleu:#1B3F6E;--bleu-clair:#2E5FA3;--bleu-pale:#EBF0F8;
-    --vert:#1A7A5E;--vert-pale:#E6F4F0;
-    --rouge:#C0392B;--rouge-pale:#FDECEA;
-    --orange:#D4700A;--orange-pale:#FEF3E7;
-    --jaune:#B7860A;--jaune-pale:#FEFBE7;
-    --gris:#64748B;--gris-pale:#F1F5F9;--border:#CBD5E1;--texte:#1E293B;--texte-doux:#475569;
-  }
+  :root{--bleu:#1B3F6E;--bleu-clair:#2E5FA3;--bleu-pale:#EBF0F8;--vert:#1A7A5E;--vert-pale:#E6F4F0;--rouge:#C0392B;--rouge-pale:#FDECEA;--orange:#D4700A;--orange-pale:#FEF3E7;--jaune:#B7860A;--jaune-pale:#FEFBE7;--gris:#64748B;--gris-pale:#F1F5F9;--border:#CBD5E1;--texte:#1E293B;--texte-doux:#475569;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:var(--texte);min-height:100vh;}
   header{background:var(--bleu);padding:20px 24px;display:flex;align-items:center;gap:16px;}
@@ -41,7 +34,16 @@
   textarea{resize:vertical;min-height:90px;line-height:1.6;}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 
-  /* Upload photo */
+  /* Cellule selector */
+  .cellule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .cellule-option input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+  .cellule-option{position:relative;}
+  .cellule-label{display:flex;align-items:center;gap:10px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;}
+  .cellule-label .cell-icon{font-size:18px;flex-shrink:0;}
+  .cellule-option input:checked + .cellule-label{border-color:var(--bleu-clair);background:var(--bleu-pale);color:var(--bleu);}
+  .cellule-label:hover{border-color:var(--bleu-clair);background:var(--bleu-pale);}
+
+  /* Upload */
   .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative;}
   .upload-zone:hover{border-color:var(--bleu-clair);background:var(--bleu-pale);}
   .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
@@ -50,46 +52,28 @@
   .upload-zone .uz-text strong{color:var(--bleu-clair);}
   .upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
   .preview-img{width:72px;height:72px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
-  .preview-name{font-size:11px;color:var(--gris);margin-top:4px;text-align:center;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
-  /* Priorité */
-  .priorite-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-  .priorite-option{position:relative;}
-  .priorite-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
-  .priorite-label{display:flex;flex-direction:column;gap:3px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;}
-  .priorite-label .p-name{font-size:13px;font-weight:600;}
-  .priorite-label .p-desc{font-size:11px;color:var(--gris);}
-  .priorite-option input:checked + .priorite-label{border-color:currentColor;background:var(--bg-color,#F8FAFC);}
-  .p-basse .priorite-label{color:var(--gris);--bg-color:var(--gris-pale);}
-  .p-normale .priorite-label{color:var(--vert);--bg-color:var(--vert-pale);}
-  .p-haute .priorite-label{color:var(--orange);--bg-color:var(--orange-pale);}
-  .p-urgente .priorite-label{color:var(--rouge);--bg-color:var(--rouge-pale);}
-
-  /* Submit */
-  .submit-zone{margin-top:28px;}
-  .btn-submit{width:100%;padding:16px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px;}
-  .btn-submit:hover{background:var(--bleu-clair);}
-  .btn-submit:active{transform:scale(0.99);}
-  .btn-submit:disabled{background:var(--gris);cursor:not-allowed;}
-  #success-msg,#error-msg{display:none;border-radius:10px;padding:20px;margin-top:20px;text-align:center;}
-  #success-msg{background:var(--vert-pale);border:1px solid #9FD8CA;}
-  #success-msg h3{color:var(--vert);font-size:17px;margin-bottom:6px;}
-  #success-msg p{color:#2D6B57;font-size:14px;}
-  #success-msg .ticket-id{font-family:monospace;font-size:12px;color:var(--gris);margin-top:10px;}
-  #error-msg{background:var(--rouge-pale);border:1px solid #F5B7B1;}
-  #error-msg p{color:var(--rouge);font-size:14px;}
-  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
-  @keyframes spin{to{transform:rotate(360deg);}}
 
   /* Barre de progression */
-  .progress-bar{display:flex;gap:0;margin-bottom:28px;}
+  .progress-bar{display:flex;gap:0;margin-bottom:12px;}
   .prog-step{flex:1;height:4px;background:var(--border);border-radius:2px;transition:background .3s;}
   .prog-step.done{background:var(--bleu);}
-  .prog-labels{display:flex;margin-bottom:16px;}
+  .prog-labels{display:flex;margin-bottom:24px;}
   .prog-label{flex:1;text-align:center;font-size:11px;color:var(--gris);font-weight:500;}
   .prog-label.active{color:var(--bleu);}
 
-  @media(max-width:480px){.field-row{grid-template-columns:1fr;}.priorite-grid{grid-template-columns:1fr 1fr;}}
+  /* Submit */
+  .btn-submit{width:100%;padding:16px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;}
+  .btn-submit:hover{background:var(--bleu-clair);}
+  .btn-submit:disabled{background:var(--gris);cursor:not-allowed;}
+  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #success-msg{display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:24px;margin-top:20px;text-align:center;}
+  #success-msg h3{color:var(--vert);font-size:18px;margin-bottom:8px;}
+  #success-msg p{color:#2D6B57;font-size:14px;line-height:1.6;}
+  #success-msg .ref{font-family:monospace;font-size:13px;background:white;padding:6px 14px;border-radius:6px;display:inline-block;margin-top:10px;color:var(--gris);}
+  #error-msg{display:none;background:var(--rouge-pale);border:1px solid #F5B7B1;border-radius:10px;padding:14px;margin-top:16px;}
+  #error-msg p{color:var(--rouge);font-size:14px;}
+  @media(max-width:480px){.field-row{grid-template-columns:1fr;}.cellule-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -97,31 +81,31 @@
   <div class="header-logo">🏫</div>
   <div>
     <h1>Signalement maintenance scolaire</h1>
-    <p>Direction de l'Éducation — Ville de Saint-Denis</p>
+    <p>Direction de l'Éducation — Pôle Technique — Ville de Saint-Denis</p>
   </div>
 </header>
 <main>
   <div class="urgence-banner">
     <div class="icon">⚠️</div>
-    <p><strong>Urgence absolue ?</strong>Pour tout danger immédiat (électrique, structure…), contactez directement la DSB au <strong>0692 05 32 82</strong> avant de remplir ce formulaire.</p>
+    <p><strong>Urgence absolue ?</strong> Pour tout danger immédiat (électrique, structure…), contactez directement la DSB au <strong>0692 05 32 82</strong> avant de remplir ce formulaire.</p>
   </div>
 
-  <!-- Barre de progression -->
   <div class="progress-bar" id="progressBar">
-    <div class="prog-step" id="ps1"></div>
-    <div style="width:6px"></div>
-    <div class="prog-step" id="ps2"></div>
-    <div style="width:6px"></div>
-    <div class="prog-step" id="ps3"></div>
+    <div class="prog-step" id="ps1"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps2"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps3"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps4"></div>
   </div>
   <div class="prog-labels">
-    <div class="prog-label active" id="pl1">Identification</div>
+    <div class="prog-label" id="pl1">Identification</div>
     <div class="prog-label" id="pl2">École</div>
-    <div class="prog-label" id="pl3">Travaux</div>
+    <div class="prog-label" id="pl3">Cellule</div>
+    <div class="prog-label" id="pl4">Travaux</div>
   </div>
 
   <form id="mainForm">
-    <!-- Section 1 -->
+
+    <!-- Section 1 : Identification -->
     <div class="section-card">
       <div class="section-header"><div class="section-num">1</div><h2>Votre identification</h2></div>
       <div class="section-body">
@@ -142,17 +126,17 @@
           </div>
         </div>
         <div class="field">
-          <label>Adresse email <span class="req">*</span><span class="hint">Vous recevrez une confirmation à cette adresse</span></label>
+          <label>Adresse email <span class="req">*</span><span class="hint">Pour recevoir la confirmation</span></label>
           <input type="email" id="dem_email" placeholder="prenom.nom@mairie-saintdenis.fr" required>
         </div>
         <div class="field">
-          <label>Téléphone <span class="hint">Facultatif — pour un contact rapide</span></label>
+          <label>Téléphone <span class="hint">Facultatif</span></label>
           <input type="tel" id="dem_tel" placeholder="0692 XX XX XX">
         </div>
       </div>
     </div>
 
-    <!-- Section 2 -->
+    <!-- Section 2 : École -->
     <div class="section-card">
       <div class="section-header"><div class="section-num">2</div><h2>École concernée</h2></div>
       <div class="section-body">
@@ -180,41 +164,54 @@
         </div>
         <div class="field">
           <label>Localisation précise <span class="hint">Facultatif</span></label>
-          <input type="text" id="localisation" placeholder="Ex : Salle de classe B3, toiture aile Est, cantine…">
+          <input type="text" id="localisation" placeholder="Ex : Salle B3, toiture aile Est, cantine…">
         </div>
       </div>
     </div>
 
-    <!-- Section 3 -->
+    <!-- Section 3 : Cellule -->
     <div class="section-card">
-      <div class="section-header"><div class="section-num">3</div><h2>Nature des travaux</h2></div>
+      <div class="section-header"><div class="section-num">3</div><h2>Cellule concernée <span style="color:var(--rouge);font-size:13px">*</span></h2></div>
+      <div class="section-body">
+        <div class="cellule-grid" id="celluleGrid">
+          <div class="cellule-option"><input type="radio" name="cellule" id="c1" value="Restauration scolaire" required><label class="cellule-label" for="c1"><span class="cell-icon">🍽️</span>Restauration scolaire</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c2" value="Informatique"><label class="cellule-label" for="c2"><span class="cell-icon">💻</span>Informatique</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c3" value="Mobilier"><label class="cellule-label" for="c3"><span class="cell-icon">🪑</span>Mobilier</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c4" value="Ventilateur / Brasseur d'air"><label class="cellule-label" for="c4"><span class="cell-icon">🌀</span>Ventilateur / Brasseur d'air</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c5" value="Couture / Textile"><label class="cellule-label" for="c5"><span class="cell-icon">🧵</span>Couture / Textile</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c6" value="Rideau / Double des clés"><label class="cellule-label" for="c6"><span class="cell-icon">🔑</span>Rideau / Double des clés</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c7" value="DTP"><label class="cellule-label" for="c7"><span class="cell-icon">🏗️</span>DTP</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c8" value="DSB"><label class="cellule-label" for="c8"><span class="cell-icon">🔧</span>DSB</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c9" value="Élagage et abattage d'arbres"><label class="cellule-label" for="c9"><span class="cell-icon">🌳</span>Élagage / Abattage d'arbres</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c10" value="ERP / Alarmes / Extincteurs"><label class="cellule-label" for="c10"><span class="cell-icon">🚨</span>ERP / Alarmes / Extincteurs</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c11" value="Dératisation et traitement 3D"><label class="cellule-label" for="c11"><span class="cell-icon">🐀</span>Dératisation / Traitement 3D</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 : Travaux -->
+    <div class="section-card">
+      <div class="section-header"><div class="section-num">4</div><h2>Nature de la demande</h2></div>
       <div class="section-body">
         <div class="field-row">
           <div class="field">
-            <label>Type de travaux <span class="req">*</span></label>
+            <label>Type de demande <span class="req">*</span></label>
             <select id="type_travaux" required>
               <option value="">-- Sélectionner --</option>
               <optgroup label="Confort thermique">
-                <option>Brasseur d'air</option>
-                <option>Pergola / caillebotis</option>
-                <option>Isolation préau</option>
+                <option>Brasseur d'air</option><option>Pergola / caillebotis</option><option>Isolation préau</option>
               </optgroup>
               <optgroup label="Maintenance bâtiment">
-                <option>Étanchéité / sur-toiture</option>
-                <option>Menuiserie</option>
-                <option>Ravalement</option>
-                <option>Réfection des coursives</option>
-                <option>Sanitaire</option>
-                <option>Sol souple</option>
-                <option>Sol synthétique</option>
-                <option>Restauration scolaire</option>
+                <option>Étanchéité / sur-toiture</option><option>Menuiserie</option><option>Ravalement</option>
+                <option>Réfection des coursives</option><option>Sanitaire</option><option>Sol souple</option>
+                <option>Sol synthétique</option><option>Restauration scolaire</option>
               </optgroup>
-              <optgroup label="Infrastructure">
-                <option>Électricité / maintenance électrique</option>
-                <option>Accessibilité</option>
-                <option>Aménagement paysager</option>
-                <option>Création salle de classe</option>
-                <option>Urgence / divers</option>
+              <optgroup label="Infrastructure & sécurité">
+                <option>Électricité / maintenance électrique</option><option>Accessibilité</option>
+                <option>Aménagement paysager</option><option>Création salle de classe</option>
+                <option>ERP / Alarme incendie / Extincteur</option><option>Dératisation</option>
+                <option>Mobilier scolaire</option><option>Informatique / Équipement numérique</option>
+                <option>Élagage / Abattage d'arbres</option><option>Urgence / divers</option>
               </optgroup>
             </select>
           </div>
@@ -231,16 +228,14 @@
         </div>
         <div class="field">
           <label>Description détaillée <span class="req">*</span></label>
-          <textarea id="description" rows="4" placeholder="Décrivez précisément le problème : localisation dans l'école, symptômes observés, date d'apparition, risques identifiés…" required></textarea>
+          <textarea id="description" rows="4" placeholder="Décrivez précisément : localisation, symptômes, date d'apparition, risques identifiés…" required></textarea>
         </div>
         <div class="field">
           <label>Observations complémentaires <span class="hint">Facultatif</span></label>
-          <textarea id="commentaires" rows="3" placeholder="Travaux déjà réalisés, tentatives de réparation, contexte particulier (événement prévu, classe fermée…)"></textarea>
+          <textarea id="commentaires" rows="3" placeholder="Tentatives de réparation, contexte particulier (événement prévu, classe fermée…)"></textarea>
         </div>
-
-        <!-- Upload photos -->
         <div class="field">
-          <label>Photos <span class="hint">Facultatif — jusqu'à 3 photos (JPG, PNG, max 5 Mo chacune)</span></label>
+          <label>Photos <span class="hint">Facultatif — jusqu'à 3 photos (max 5 Mo chacune)</span></label>
           <div class="upload-zone" id="uploadZone">
             <input type="file" id="photoInput" accept="image/*" multiple onchange="previewPhotos(this)">
             <div class="uz-icon">📷</div>
@@ -251,22 +246,20 @@
       </div>
     </div>
 
-    <div class="submit-zone">
-      <button type="submit" class="btn-submit" id="submitBtn">
-        <div class="spinner" id="spinner"></div>
-        <span id="btnText">Envoyer le signalement</span>
-      </button>
-    </div>
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">Envoyer le signalement</span>
+    </button>
   </form>
 
   <div id="success-msg">
-    <h3>✅ Signalement envoyé</h3>
-    <p>Votre demande a bien été enregistrée. Un email de confirmation vous a été envoyé.<br>La Direction de l'Éducation en prendra connaissance dans les meilleurs délais.</p>
-    <div class="ticket-id" id="ticketId"></div>
-    <br>
-    <button onclick="resetForm()" style="background:var(--vert);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;">Nouveau signalement</button>
+    <h3>✅ Signalement envoyé avec succès</h3>
+    <p>Votre demande a bien été transmise à la cellule concernée.<br>Un email de confirmation vous a été envoyé à <strong id="confirmEmail"></strong>.</p>
+    <div class="ref" id="ticketRef"></div>
+    <br><br>
+    <button onclick="resetForm()" style="background:var(--vert);color:white;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;">Nouveau signalement</button>
   </div>
-  <div id="error-msg"><p id="errorText">Une erreur est survenue. Veuillez réessayer.</p></div>
+  <div id="error-msg"><p id="errorText"></p></div>
 </main>
 
 <script>
@@ -300,81 +293,55 @@ function filtrerEcoles(){
   majProgression();
 }
 
-// Progression
 function majProgression(){
-  const nom=document.getElementById('dem_nom').value;
-  const role=document.getElementById('dem_role').value;
-  const email=document.getElementById('dem_email').value;
-  const ecole=document.getElementById('ecole').value;
-  const secteur=document.getElementById('secteur').value;
-  const type=document.getElementById('type_travaux').value;
-  const desc=document.getElementById('description').value;
-
-  const s1=nom&&role&&email;
-  const s2=ecole&&secteur;
-  const s3=type&&desc;
-
-  document.getElementById('ps1').classList.toggle('done',!!s1);
-  document.getElementById('ps2').classList.toggle('done',!!s2);
-  document.getElementById('ps3').classList.toggle('done',!!s3);
-  document.getElementById('pl1').classList.toggle('active',!!s1);
-  document.getElementById('pl2').classList.toggle('active',!!s2);
-  document.getElementById('pl3').classList.toggle('active',!!s3);
+  const s1=document.getElementById('dem_nom').value&&document.getElementById('dem_role').value&&document.getElementById('dem_email').value;
+  const s2=document.getElementById('secteur').value&&document.getElementById('ecole').value;
+  const s3=document.querySelector('input[name=cellule]:checked');
+  const s4=document.getElementById('type_travaux').value&&document.getElementById('description').value;
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('done',[s1,s2,s3,s4][i]);
+    document.getElementById('pl'+(i+1)).classList.toggle('active',[s1,s2,s3,s4][i]);
+  });
 }
 document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('change',majProgression));
-document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',majProgression));
+document.querySelectorAll('input[type=text],input[type=email],input[type=tel],textarea').forEach(el=>el.addEventListener('input',majProgression));
 
-// Preview photos
 function previewPhotos(input){
   const preview=document.getElementById('uploadPreview');
   preview.innerHTML='';
-  const files=Array.from(input.files).slice(0,3);
-  files.forEach(f=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const wrap=document.createElement('div');
+  Array.from(input.files).slice(0,3).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
       const img=document.createElement('img');
-      img.src=e.target.result;
-      img.className='preview-img';
-      const name=document.createElement('div');
-      name.className='preview-name';
-      name.textContent=f.name;
-      wrap.appendChild(img);
-      wrap.appendChild(name);
-      preview.appendChild(wrap);
+      img.src=e.target.result;img.className='preview-img';
+      preview.appendChild(img);
     };
-    reader.readAsDataURL(f);
+    r.readAsDataURL(f);
   });
-  document.getElementById('uploadZone').querySelector('.uz-text').innerHTML=`<strong>${files.length} photo${files.length>1?'s':''} sélectionnée${files.length>1?'s':''}</strong>`;
 }
 
-// Conversion image en base64
 async function imageToBase64(file){
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=e=>res(e.target.result.split(',')[1]);
-    r.onerror=rej;
-    r.readAsDataURL(file);
-  });
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
 }
 
 document.getElementById('mainForm').addEventListener('submit',async(e)=>{
   e.preventDefault();
   const btn=document.getElementById('submitBtn');
   const spinner=document.getElementById('spinner');
-  const btnText=document.getElementById('btnText');
-  btn.disabled=true;spinner.style.display='block';btnText.textContent='Envoi en cours…';
+  btn.disabled=true;spinner.style.display='block';
+  document.getElementById('btnText').textContent='Envoi en cours…';
   document.getElementById('error-msg').style.display='none';
 
-  // Photos en base64
+  const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
+
   let photosData=null;
   const photoInput=document.getElementById('photoInput');
   if(photoInput.files.length>0){
     const b64arr=[];
     for(const f of Array.from(photoInput.files).slice(0,3)){
-      try{b64arr.push({nom:f.name,taille:f.size,data:await imageToBase64(f)});}catch(err){}
+      try{b64arr.push({nom:f.name,data:await imageToBase64(f)});}catch(err){}
     }
-    if(b64arr.length>0) photosData=JSON.stringify(b64arr);
+    if(b64arr.length) photosData=JSON.stringify(b64arr);
   }
 
   const data={
@@ -385,6 +352,7 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
     secteur:document.getElementById('secteur').value,
     ecole:document.getElementById('ecole').value,
     localisation:document.getElementById('localisation').value||null,
+    cellule:cellule,
     type_travaux:document.getElementById('type_travaux').value,
     priorite:document.getElementById('priorite').value,
     description:document.getElementById('description').value,
@@ -401,14 +369,16 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
     });
     if(!res.ok){const err=await res.json();throw new Error(err.message||'Erreur serveur');}
     const result=await res.json();
-    const ticketId=result[0]?.id?.slice(0,8).toUpperCase();
+    const ref=result[0]?.id?.slice(0,8).toUpperCase();
     document.getElementById('mainForm').style.display='none';
     document.getElementById('success-msg').style.display='block';
-    document.getElementById('ticketId').textContent=`Référence ticket : ${ticketId}`;
+    document.getElementById('ticketRef').textContent='Référence : '+ref;
+    document.getElementById('confirmEmail').textContent=data.demandeur_email;
   }catch(err){
     document.getElementById('error-msg').style.display='block';
-    document.getElementById('errorText').textContent=`Erreur : ${err.message}`;
-    btn.disabled=false;spinner.style.display='none';btnText.textContent='Envoyer le signalement';
+    document.getElementById('errorText').textContent='Erreur : '+err.message;
+    btn.disabled=false;spinner.style.display='none';
+    document.getElementById('btnText').textContent='Envoyer le signalement';
   }
 });
 
