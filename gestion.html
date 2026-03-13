@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion maintenance — Direction de l'Éducation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+
+  :root {
+    --bleu: #1B3F6E;
+    --bleu-clair: #2E5FA3;
+    --bleu-pale: #EBF0F8;
+    --vert: #1A7A5E;
+    --vert-pale: #E6F4F0;
+    --rouge: #C0392B;
+    --rouge-pale: #FDECEA;
+    --orange: #D4700A;
+    --orange-pale: #FEF3E7;
+    --jaune: #B7860A;
+    --jaune-pale: #FEFBE7;
+    --gris: #64748B;
+    --gris-clair: #94A3B8;
+    --gris-pale: #F1F5F9;
+    --border: #CBD5E1;
+    --texte: #1E293B;
+    --texte-doux: #475569;
+    --sidebar: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F0F4F8;
+    color: var(--texte);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── Login screen ─── */
+  #login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1B3F6E 0%, #2E5FA3 100%);
+  }
+
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    text-align: center;
+  }
+
+  .login-logo { font-size: 40px; margin-bottom: 16px; }
+  .login-card h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--bleu); margin-bottom: 4px; font-weight: 400; }
+  .login-card p { font-size: 13px; color: var(--gris); margin-bottom: 28px; }
+
+  .login-card input {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 12px;
+    transition: border-color .15s;
+  }
+  .login-card input:focus { outline: none; border-color: var(--bleu-clair); }
+
+  .login-btn {
+    width: 100%; padding: 13px; background: var(--bleu); color: white; border: none;
+    border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+  }
+  .login-btn:hover { background: var(--bleu-clair); }
+  .login-error { color: var(--rouge); font-size: 13px; margin-top: 10px; display: none; }
+
+  /* ─── App layout ─── */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+
+  /* Topbar */
+  .topbar {
+    background: var(--bleu);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-logo { font-size: 20px; }
+  .topbar h1 { font-family: 'DM Serif Display', serif; font-size: 17px; color: white; font-weight: 400; }
+  .topbar-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .badge-urgence {
+    background: var(--rouge);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: none;
+    cursor: pointer;
+  }
+
+  .btn-refresh {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-refresh:hover { background: rgba(255,255,255,0.25); }
+
+  .btn-logout {
+    background: none;
+    color: rgba(255,255,255,0.6);
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    padding: 6px;
+  }
+  .btn-logout:hover { color: white; }
+
+  /* Content area */
+  .content { flex: 1; padding: 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: box-shadow .15s, border-color .15s;
+  }
+
+  .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--bleu-clair); }
+  .stat-card.active { border-color: var(--bleu); background: var(--bleu-pale); }
+
+  .stat-num { font-size: 28px; font-weight: 600; color: var(--texte); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--gris); margin-top: 4px; }
+  .stat-card.s-urgente .stat-num { color: var(--rouge); }
+  .stat-card.s-nouveau .stat-num { color: var(--bleu); }
+  .stat-card.s-encours .stat-num { color: var(--orange); }
+  .stat-card.s-resolu .stat-num { color: var(--vert); }
+
+  /* Filters */
+  .filters-bar {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filters-bar select, .filters-bar input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--texte);
+    background: var(--gris-pale);
+    cursor: pointer;
+  }
+
+  .filters-bar input { flex: 1; min-width: 200px; background: white; }
+  .filters-bar input:focus, .filters-bar select:focus { outline: none; border-color: var(--bleu-clair); }
+
+  .filters-bar select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .filter-label { font-size: 13px; font-weight: 500; color: var(--gris); white-space: nowrap; }
+
+  /* Table */
+  .table-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .table-header-bar {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table-header-bar h2 { font-size: 15px; font-weight: 600; }
+  .table-count { font-size: 13px; color: var(--gris); }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gris);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--gris-pale);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 13px 16px;
+    font-size: 13px;
+    color: var(--texte);
+    border-bottom: 1px solid #F1F5F9;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: #F8FAFF; }
+  tr.urgente td { background: #FFF8F8; }
+  tr.urgente:hover td { background: #FFF0F0; }
+
+  .ticket-id { font-family: monospace; font-size: 11px; color: var(--gris-clair); }
+  .ticket-ecole { font-weight: 500; }
+  .ticket-secteur { font-size: 11px; color: var(--gris); margin-top: 2px; }
+  .ticket-desc { color: var(--texte-doux); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Badges priorité */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .b-urgente { background: var(--rouge-pale); color: var(--rouge); }
+  .b-haute { background: var(--orange-pale); color: var(--orange); }
+  .b-normale { background: var(--jaune-pale); color: var(--jaune); }
+  .b-basse { background: var(--gris-pale); color: var(--gris); }
+
+  /* Badges statut */
+  .statut-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .s-nouveau { background: var(--bleu-pale); color: var(--bleu); }
+  .s-en_cours { background: var(--orange-pale); color: var(--orange); }
+  .s-en_attente { background: var(--jaune-pale); color: var(--jaune); }
+  .s-resolu { background: var(--vert-pale); color: var(--vert); }
+  .s-annule { background: var(--gris-pale); color: var(--gris); }
+
+  /* Select statut inline */
+  .statut-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    background: white;
+  }
+
+  /* Bouton détail */
+  .btn-detail {
+    background: var(--bleu-pale);
+    color: var(--bleu);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .btn-detail:hover { background: var(--bleu-clair); color: white; }
+
+  .date-cell { font-size: 12px; color: var(--gris); white-space: nowrap; }
+
+  /* Loading / empty */
+  .loading-row td, .empty-row td {
+    text-align: center;
+    padding: 40px;
+    color: var(--gris);
+    font-size: 14px;
+  }
+
+  /* ─── Modal ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 30, 60, 0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+  }
+
+  .modal-header h3 { font-size: 17px; font-weight: 600; }
+  .modal-id { font-size: 12px; color: var(--gris); font-family: monospace; margin-top: 3px; }
+
+  .modal-close {
+    background: var(--gris-pale);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--gris);
+    transition: background .15s;
+  }
+  .modal-close:hover { background: var(--border); }
+
+  .modal-body { padding: 24px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .info-item label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gris);
+    margin-bottom: 4px;
+  }
+  .info-item .val { font-size: 14px; color: var(--texte); }
+
+  .desc-block {
+    background: var(--gris-pale);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--texte-doux);
+    line-height: 1.6;
+  }
+
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .modal-actions label { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+
+  .modal-actions select, .modal-actions input, .modal-actions textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--texte);
+  }
+
+  .modal-actions select:focus, .modal-actions input:focus, .modal-actions textarea:focus {
+    outline: none;
+    border-color: var(--bleu-clair);
+  }
+
+  .modal-comment { grid-column: 1 / -1; }
+  .modal-comment textarea { min-height: 80px; resize: vertical; }
+
+  .btn-save {
+    width: 100%;
+    padding: 13px;
+    background: var(--bleu);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-save:hover { background: var(--bleu-clair); }
+  .btn-save:disabled { background: var(--gris); }
+
+  .save-success {
+    text-align: center;
+    color: var(--vert);
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .stats-bar { grid-template-columns: repeat(3, 1fr); }
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6) { display: none; }
+  }
+  @media (max-width: 640px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 12px; }
+    th:nth-child(4), td:nth-child(4) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN ─── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🏛️</div>
+    <h1>Espace gestion</h1>
+    <p>Direction de l'Éducation — Saint-Denis</p>
+    <input type="text" id="login-user" placeholder="Identifiant" autocomplete="username">
+    <input type="password" id="login-pass" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Connexion</button>
+    <div class="login-error" id="login-error">Identifiant ou mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- ─── APPLICATION ─── -->
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🏫</div>
+      <div>
+        <div class="topbar h1" style="font-family:'DM Serif Display',serif;font-size:17px;color:white;font-weight:400;">Maintenance scolaire</div>
+        <div class="topbar-sub">Direction de l'Éducation — Saint-Denis</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="badge-urgence" id="badgeUrgence" onclick="filtrerParUrgence()">⚠️ <span id="countUrgent">0</span> urgences</div>
+      <button class="btn-refresh" onclick="chargerTickets()">↻ Actualiser</button>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-card s-total" onclick="filtrerStat('')">
+        <div class="stat-num" id="statTotal">–</div>
+        <div class="stat-label">Total tickets</div>
+      </div>
+      <div class="stat-card s-urgente" onclick="filtrerStat('urgente')">
+        <div class="stat-num" id="statUrgente">–</div>
+        <div class="stat-label">Urgents</div>
+      </div>
+      <div class="stat-card s-nouveau" onclick="filtrerStat('nouveau')">
+        <div class="stat-num" id="statNouveau">–</div>
+        <div class="stat-label">Nouveaux</div>
+      </div>
+      <div class="stat-card s-encours" onclick="filtrerStat('en_cours')">
+        <div class="stat-num" id="statEncours">–</div>
+        <div class="stat-label">En cours</div>
+      </div>
+      <div class="stat-card s-resolu" onclick="filtrerStat('resolu')">
+        <div class="stat-num" id="statResolu">–</div>
+        <div class="stat-label">Résolus</div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-bar">
+      <span class="filter-label">Filtrer :</span>
+      <input type="text" id="searchInput" placeholder="🔍 Rechercher école, description…" oninput="renderTable()">
+      <select id="filterStatut" onchange="renderTable()">
+        <option value="">Tous les statuts</option>
+        <option value="nouveau">Nouveau</option>
+        <option value="en_cours">En cours</option>
+        <option value="en_attente">En attente</option>
+        <option value="resolu">Résolu</option>
+        <option value="annule">Annulé</option>
+      </select>
+      <select id="filterPriorite" onchange="renderTable()">
+        <option value="">Toutes priorités</option>
+        <option value="urgente">🔴 Urgente</option>
+        <option value="haute">🟠 Haute</option>
+        <option value="normale">🟡 Normale</option>
+        <option value="basse">⚪ Basse</option>
+      </select>
+      <select id="filterSecteur" onchange="renderTable()">
+        <option value="">Tous les secteurs</option>
+        <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
+        <option>BRETAGNE</option><option>BRULE</option>
+        <option>CENTRE VILLE</option><option>CAMELIAS</option>
+        <option>CHAUDRON</option><option>DOMENJOD</option>
+        <option>MONTAGNE 15ème</option><option>MONTAGNE 8ème</option>
+        <option>MONTGAILLARD</option><option>MOUFIA</option>
+        <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇOIS</option>
+        <option>SAINTE CLOTILDE</option><option>SOURCE</option>
+      </select>
+      <select id="filterType" onchange="renderTable()">
+        <option value="">Tous les types</option>
+        <option>Brasseur d'air</option><option>Pergola / caillebotis</option>
+        <option>Étanchéité / sur-toiture</option><option>Menuiserie</option>
+        <option>Ravalement</option><option>Sanitaire</option>
+        <option>Sol souple</option><option>Sol synthétique</option>
+        <option>Électricité / maintenance électrique</option>
+        <option>Restauration scolaire</option><option>Urgence / divers</option>
+      </select>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-card">
+      <div class="table-header-bar">
+        <h2>Tickets de maintenance</h2>
+        <span class="table-count" id="tableCount">–</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Ref.</th>
+            <th>École / Secteur</th>
+            <th>Type de travaux</th>
+            <th>Description</th>
+            <th>Priorité</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ticketsBody">
+          <tr class="loading-row"><td colspan="8">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── MODAL DÉTAIL ─── -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle">Ticket</h3>
+        <div class="modal-id" id="modalId"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-grid">
+        <div class="info-item"><label>École</label><div class="val" id="mEcole">–</div></div>
+        <div class="info-item"><label>Secteur</label><div class="val" id="mSecteur">–</div></div>
+        <div class="info-item"><label>Demandeur</label><div class="val" id="mDemandeur">–</div></div>
+        <div class="info-item"><label>Email</label><div class="val" id="mEmail" style="font-size:13px">–</div></div>
+        <div class="info-item"><label>Priorité</label><div class="val" id="mPriorite">–</div></div>
+        <div class="info-item"><label>Date signalement</label><div class="val" id="mDate">–</div></div>
+      </div>
+      <div class="desc-block" id="mDescription"></div>
+      <div id="mCommentairesInitBlock" style="margin-bottom:20px;display:none">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--gris);margin-bottom:6px;">Observations initiales</div>
+        <div class="desc-block" id="mCommentairesInit" style="margin-bottom:0"></div>
+      </div>
+
+      <div class="modal-actions">
+        <div class="field">
+          <label>Statut</label>
+          <select id="mStatut">
+            <option value="nouveau">Nouveau</option>
+            <option value="en_cours">En cours</option>
+            <option value="en_attente">En attente</option>
+            <option value="resolu">Résolu</option>
+            <option value="annule">Annulé</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Assigné à</label>
+          <input type="text" id="mAssignee" placeholder="Nom de l'agent DSB…">
+        </div>
+        <div class="modal-comment">
+          <label>Note de suivi</label>
+          <textarea id="mNotes" placeholder="Ajouter une note : actions menées, prestataire contacté, date d'intervention prévue…"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-save" id="btnSave" onclick="sauvegarderTicket()">Enregistrer les modifications</button>
+      <div class="save-success" id="saveSuccess">✅ Modifications enregistrées</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://clakdvjcytmtubenprux.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0';
+
+// Comptes (à modifier — stockage local simple)
+const COMPTES = {
+  'admin': 'education2024',
+  'dsb': 'dsb2024',
+  'direction': 'direction2024'
+};
+
+let allTickets = [];
+let currentTicketId = null;
+let filterStatutForce = '';
+
+// ─── AUTH ───
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (COMPTES[u] && COMPTES[u] === p) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    sessionStorage.setItem('auth', u);
+    chargerTickets();
+    setInterval(chargerTickets, 60000); // refresh auto toutes les 60s
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('auth');
+  location.reload();
+}
+
+// Check session
+if (sessionStorage.getItem('auth')) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  setTimeout(chargerTickets, 100);
+  setInterval(chargerTickets, 60000);
+}
+
+// ─── DATA ───
+async function chargerTickets() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/tickets?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    allTickets = await res.json();
+    majStats();
+    renderTable();
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function majStats() {
+  const t = allTickets;
+  document.getElementById('statTotal').textContent = t.length;
+  document.getElementById('statUrgente').textContent = t.filter(x => x.priorite === 'urgente').length;
+  document.getElementById('statNouveau').textContent = t.filter(x => x.statut === 'nouveau').length;
+  document.getElementById('statEncours').textContent = t.filter(x => x.statut === 'en_cours').length;
+  document.getElementById('statResolu').textContent = t.filter(x => x.statut === 'resolu').length;
+
+  const urgents = t.filter(x => x.priorite === 'urgente' && x.statut !== 'resolu' && x.statut !== 'annule').length;
+  const badge = document.getElementById('badgeUrgence');
+  document.getElementById('countUrgent').textContent = urgents;
+  badge.style.display = urgents > 0 ? 'block' : 'none';
+}
+
+function filtrerStat(val) {
+  filterStatutForce = val;
+  if (val === 'urgente') {
+    document.getElementById('filterPriorite').value = 'urgente';
+    document.getElementById('filterStatut').value = '';
+  } else if (val) {
+    document.getElementById('filterStatut').value = val;
+    document.getElementById('filterPriorite').value = '';
+  } else {
+    document.getElementById('filterStatut').value = '';
+    document.getElementById('filterPriorite').value = '';
+  }
+  renderTable();
+}
+
+function filtrerParUrgence() {
+  filtrerStat('urgente');
+}
+
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const fStatut = document.getElementById('filterStatut').value;
+  const fPriorite = document.getElementById('filterPriorite').value;
+  const fSecteur = document.getElementById('filterSecteur').value;
+  const fType = document.getElementById('filterType').value;
+
+  let filtered = allTickets.filter(t => {
+    if (fStatut && t.statut !== fStatut) return false;
+    if (fPriorite && t.priorite !== fPriorite) return false;
+    if (fSecteur && t.secteur !== fSecteur) return false;
+    if (fType && t.type_travaux !== fType) return false;
+    if (search) {
+      const hay = `${t.ecole} ${t.description} ${t.demandeur_nom} ${t.type_travaux} ${t.secteur}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('tableCount').textContent = `${filtered.length} ticket${filtered.length > 1 ? 's' : ''}`;
+
+  const tbody = document.getElementById('ticketsBody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Aucun ticket trouvé</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(t => {
+    const date = new Date(t.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'2-digit'});
+    const badge = prioriteBadge(t.priorite);
+    const statBadge = statutBadge(t.statut);
+    const shortId = t.id.slice(0,8).toUpperCase();
+    return `
+    <tr class="${t.priorite === 'urgente' ? 'urgente' : ''}">
+      <td><div class="ticket-id">${shortId}</div></td>
+      <td>
+        <div class="ticket-ecole">${t.ecole || '–'}</div>
+        <div class="ticket-secteur">${t.secteur || ''}</div>
+      </td>
+      <td style="font-size:13px">${t.type_travaux || '–'}</td>
+      <td><div class="ticket-desc" title="${(t.description||'').replace(/"/g,'&quot;')}">${t.description || '–'}</div></td>
+      <td>${badge}</td>
+      <td>${statBadge}</td>
+      <td><div class="date-cell">${date}</div></td>
+      <td><button class="btn-detail" onclick="ouvrirModal('${t.id}')">Détail →</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function prioriteBadge(p) {
+  const map = { urgente: ['🔴','b-urgente','Urgente'], haute: ['🟠','b-haute','Haute'], normale: ['🟡','b-normale','Normale'], basse: ['⚫','b-basse','Basse'] };
+  const [icon, cls, label] = map[p] || ['','b-basse', p || '–'];
+  return `<span class="badge ${cls}">${icon} ${label}</span>`;
+}
+
+function statutBadge(s) {
+  const map = { nouveau: 'Nouveau', en_cours: 'En cours', en_attente: 'En attente', resolu: 'Résolu', annule: 'Annulé' };
+  return `<span class="statut-badge s-${s}">${map[s] || s}</span>`;
+}
+
+// ─── MODAL ───
+function ouvrirModal(id) {
+  const t = allTickets.find(x => x.id === id);
+  if (!t) return;
+  currentTicketId = id;
+
+  document.getElementById('modalTitle').textContent = `${t.ecole || 'École'} — ${t.type_travaux || ''}`;
+  document.getElementById('modalId').textContent = `Ref: ${t.id.slice(0,8).toUpperCase()} · Créé le ${new Date(t.created_at).toLocaleDateString('fr-FR')}`;
+  document.getElementById('mEcole').textContent = t.ecole || '–';
+  document.getElementById('mSecteur').textContent = t.secteur || '–';
+  document.getElementById('mDemandeur').textContent = `${t.demandeur_nom || '–'} (${t.demandeur_role || ''})`;
+  document.getElementById('mEmail').textContent = t.demandeur_email || '–';
+  document.getElementById('mPriorite').innerHTML = prioriteBadge(t.priorite);
+  document.getElementById('mDate').textContent = new Date(t.created_at).toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('mDescription').textContent = t.description || '–';
+
+  const initBlock = document.getElementById('mCommentairesInitBlock');
+  if (t.commentaires) {
+    document.getElementById('mCommentairesInit').textContent = t.commentaires;
+    initBlock.style.display = 'block';
+  } else {
+    initBlock.style.display = 'none';
+  }
+
+  document.getElementById('mStatut').value = t.statut || 'nouveau';
+  document.getElementById('mAssignee').value = t.assignee || '';
+  document.getElementById('mNotes').value = '';
+  document.getElementById('saveSuccess').style.display = 'none';
+  document.getElementById('btnSave').disabled = false;
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentTicketId = null;
+}
+
+async function sauvegarderTicket() {
+  if (!currentTicketId) return;
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+
+  const payload = {
+    statut: document.getElementById('mStatut').value,
+    assignee: document.getElementById('mAssignee').value || null,
+    updated_at: new Date().toISOString(),
+    updated_by: sessionStorage.getItem('auth') || 'admin'
+  };
+
+  const notes = document.getElementById('mNotes').value.trim();
+  if (notes) {
+    const t = allTickets.find(x => x.id === currentTicketId);
+    const ancien = t?.commentaires || '';
+    const dateNote = new Date().toLocaleDateString('fr-FR');
+    payload.commentaires = ancien ? `${ancien}\n\n[${dateNote}] ${notes}` : `[${dateNote}] ${notes}`;
+  }
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/tickets?id=eq.${currentTicketId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error('Erreur');
+
+    document.getElementById('saveSuccess').style.display = 'block';
+    btn.textContent = 'Enregistrer les modifications';
+    btn.disabled = false;
+    await chargerTickets();
+  } catch(e) {
+    alert('Erreur lors de la sauvegarde.');
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer les modifications';
+  }
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
