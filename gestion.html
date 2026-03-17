@@ -241,6 +241,7 @@
     <div class="tab active" id="tab-btn-liste" onclick="showTab('liste')">📋 Tickets</div>
     <div class="tab" id="tab-btn-stats" onclick="showTab('stats')">📊 Statistiques</div>
     <div class="tab" id="tab-btn-relance" onclick="showTab('relance')" style="display:none">📬 Relances <span class="tab-badge" id="badgeRelance">0</span></div>
+    <div class="tab" id="tab-btn-referents" onclick="showTab('referents')" style="display:none">👥 Référents</div>
   </div>
 
   <div class="content">
@@ -361,10 +362,25 @@
         </table>
         </div>
       </div>
+    </div><!-- fin tab-relance -->
+
+    <!-- TAB RÉFÉRENTS -->
+    <div id="tab-referents" style="display:none">
+      <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">👥 Gestion des référents par cellule</h3>
+            <p style="font-size:13px;color:var(--gris);">Renseignez les coordonnées de la personne responsable de chaque cellule. Ces informations sont utilisées pour les relances automatiques.</p>
+          </div>
+          <button onclick="sauvegarderReferents()" style="background:var(--vert);color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">💾 Tout enregistrer</button>
+        </div>
+        <div id="referentsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;"></div>
+        <div id="referentsFeedback" style="display:none;margin-top:14px;padding:10px 16px;border-radius:8px;font-size:13px;"></div>
+      </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- fin .content -->
+</div><!-- fin .app -->
 
 <!-- MODAL DÉTAIL -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
@@ -558,6 +574,7 @@ function doLogin(){
     // Onglet relance visible pour secrétaire/direction
     if(compte.role==='secretaire'||compte.role==='direction'){
       document.getElementById('tab-btn-relance').style.display='block';
+      document.getElementById('tab-btn-referents').style.display='block';
       document.getElementById('filterCellule').style.display='block';
     }
     chargerTickets();
@@ -580,6 +597,7 @@ if(saved){
       currentUser.cellule||((currentUser.role==='secretaire')?'Secrétaire — Vue globale':'Direction');
     if(currentUser.role==='secretaire'||currentUser.role==='direction'){
       document.getElementById('tab-btn-relance').style.display='block';
+      document.getElementById('tab-btn-referents').style.display='block';
       document.getElementById('filterCellule').style.display='block';
     }
     setTimeout(chargerTickets,100);
@@ -589,12 +607,14 @@ if(saved){
 
 // ─── TABS ─────────────────────────────────────────────────────
 function showTab(t){
-  ['liste','stats','relance'].forEach(id=>{
-    document.getElementById('tab-'+id).style.display=t===id?'block':'none';
+  ['liste','stats','relance','referents'].forEach(id=>{
+    const el=document.getElementById('tab-'+id);
+    if(el) el.style.display=t===id?'block':'none';
     document.getElementById('tab-btn-'+id)?.classList.toggle('active',t===id);
   });
   if(t==='stats') renderStats();
   if(t==='relance') renderRelance();
+  if(t==='referents') renderReferents();
 }
 
 // ─── DATA ─────────────────────────────────────────────────────
@@ -1011,13 +1031,115 @@ function renderBarChart(id,data){
 }
 
 
-// ─── TOAST / LIGHTBOX ────────────────────────────────────────
+
+// ─── RÉFÉRENTS ───────────────────────────────────────────────
+// Structure d'un référent : {nom, email, tel, fonction}
+// Stockage dans localStorage, clé 'referents_v1'
+
+const CELLULES_LIST = [
+  'Restauration scolaire',
+  'Informatique',
+  'Mobilier',
+  "Ventilateur / Brasseur d'air",
+  'Couture / Textile — Rideau / Double des clés',
+  'DTP',
+  'DSB',
+  "Élagage et abattage d'arbres",
+  'ERP / Alarmes / Extincteurs',
+  'Dératisation et traitement 3D',
+];
+
+const CELLULE_ICONS = {
+  'Restauration scolaire': '🍽️',
+  'Informatique': '💻',
+  'Mobilier': '🪑',
+  "Ventilateur / Brasseur d'air": '🌀',
+  'Couture / Textile — Rideau / Double des clés': '🧵🔑',
+  'DTP': '🏗️',
+  'DSB': '🔧',
+  "Élagage et abattage d'arbres": '🌳',
+  'ERP / Alarmes / Extincteurs': '🚨',
+  'Dératisation et traitement 3D': '🐀',
+};
+
+function chargerReferents(){
+  try{ return JSON.parse(localStorage.getItem('referents_v1'))||{}; }catch(e){ return {}; }
+}
+
+function sauvegarderReferents(){
+  const data = {};
+  CELLULES_LIST.forEach(cellule => {
+    const key = cellule.replace(/[^a-zA-Z0-9]/g,'_');
+    data[cellule] = {
+      nom:      (document.getElementById(`ref_nom_${key}`)?.value||'').trim(),
+      email:    (document.getElementById(`ref_email_${key}`)?.value||'').trim(),
+      tel:      (document.getElementById(`ref_tel_${key}`)?.value||'').trim(),
+      fonction: (document.getElementById(`ref_fonction_${key}`)?.value||'').trim(),
+    };
+    // Synchroniser avec COMPTES pour les relances EmailJS
+    const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
+    if(compte && data[cellule].email) compte.email = data[cellule].email;
+  });
+  localStorage.setItem('referents_v1', JSON.stringify(data));
+  const fb = document.getElementById('referentsFeedback');
+  fb.textContent = '✅ Référents enregistrés avec succès. Les relances utiliseront ces adresses email.';
+  fb.style.background = 'var(--vert-pale)';
+  fb.style.border = '1px solid #9FD8CA';
+  fb.style.color = '#2D6B57';
+  fb.style.display = 'block';
+  setTimeout(() => fb.style.display='none', 4000);
+}
+
+function renderReferents(){
+  const data = chargerReferents();
+  // Synchroniser les emails dans COMPTES au chargement
+  CELLULES_LIST.forEach(cellule => {
+    if(data[cellule]?.email){
+      const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
+      if(compte) compte.email = data[cellule].email;
+    }
+  });
+  const grid = document.getElementById('referentsGrid');
+  if(!grid) return;
+  grid.innerHTML = CELLULES_LIST.map(cellule => {
+    const key = cellule.replace(/[^a-zA-Z0-9]/g,'_');
+    const r = data[cellule] || {};
+    const icon = CELLULE_ICONS[cellule] || '📋';
+    return `
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <span style="font-size:20px;">${icon}</span>
+        <div style="font-size:13px;font-weight:600;color:var(--bleu);">${cellule}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Nom complet</label>
+          <input id="ref_nom_${key}" type="text" value="${r.nom||''}" placeholder="Prénom Nom" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Fonction</label>
+          <input id="ref_fonction_${key}" type="text" value="${r.fonction||''}" placeholder="Ex : Responsable DSB" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Email <span style="color:var(--rouge)">*</span> <span style="font-weight:400;color:var(--gris);font-size:11px;">(utilisé pour les relances)</span></label>
+          <input id="ref_email_${key}" type="email" value="${r.email||''}" placeholder="prenom.nom@mairie-saintdenis.fr" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;${r.email?'border-color:#9FD8CA;background:#F0FDF4;':''}">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Téléphone</label>
+          <input id="ref_tel_${key}" type="tel" value="${r.tel||''}" placeholder="0692 XX XX XX" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+        </div>
+      </div>
+      ${r.email ? `<div style="margin-top:10px;font-size:11px;color:var(--vert);display:flex;align-items:center;gap:4px;">✅ Email configuré — relances actives</div>` : `<div style="margin-top:10px;font-size:11px;color:var(--orange);display:flex;align-items:center;gap:4px;">⚠️ Email manquant — relances inactives</div>`}
+    </div>`;
+  }).join('');
+}
+
 let tt;
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4000);}
 function openLightbox(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').classList.add('open');}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.5 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.6 — 17/03/2026</div>
 </body>
 </html>
