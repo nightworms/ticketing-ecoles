@@ -313,7 +313,7 @@ function majTypes(){
 // Date min = aujourd'hui
 document.getElementById('date_souhaitee').min=new Date().toISOString().split('T')[0];
 
-
+function majEcoles(){
   const s=document.getElementById('secteur').value;
   const el=document.getElementById('ecole');
   el.innerHTML='<option value="">-- Sélectionner une école --</option>';
@@ -420,5 +420,6 @@ function resetForm(){
   document.querySelectorAll('.prog-step').forEach(s=>s.classList.remove('done'));
 }
 </script>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.3 — 17/03/2026</div>
 </body>
 </html>
