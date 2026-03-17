@@ -109,29 +109,38 @@
     <div class="section-card">
       <div class="section-header"><div class="section-num">1</div><h2>Votre identification</h2></div>
       <div class="section-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Nom complet <span class="req">*</span></label>
-            <input type="text" id="dem_nom" placeholder="Ex : Marie Dupont" required>
+        <div class="field">
+          <label>Adresse email <span class="req">*</span><span class="hint">Email de l'école ou de la Direction de l'Éducation</span></label>
+          <div style="position:relative;">
+            <input type="email" id="dem_email" placeholder="ce.XXXXXXX@ac-reunion.fr ou prenom.nom@mairie-saintdenis.fr" required oninput="verifierEmail(this.value)">
+            <div id="email-status" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;"></div>
+          </div>
+          <div id="email-msg" style="display:none;margin-top:6px;padding:8px 12px;border-radius:8px;font-size:13px;"></div>
+        </div>
+        <div id="suite-identification" style="display:none;">
+          <div id="badge-ecole" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#2D6B57;">
+            <strong>🏫 École identifiée :</strong> <span id="badge-nom-ecole"></span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nom complet <span class="req">*</span></label>
+              <input type="text" id="dem_nom" placeholder="Ex : Marie Dupont" required>
+            </div>
+            <div class="field">
+              <label>Fonction <span class="req">*</span></label>
+              <select id="dem_role" required>
+                <option value="">-- Sélectionner --</option>
+                <option>Directeur(trice) d'école</option>
+                <option>Agent Direction Éducation</option>
+                <option>Agent DSB</option>
+                <option>Autre</option>
+              </select>
+            </div>
           </div>
           <div class="field">
-            <label>Fonction <span class="req">*</span></label>
-            <select id="dem_role" required>
-              <option value="">-- Sélectionner --</option>
-              <option>Directeur(trice) d'école</option>
-              <option>Agent Direction Éducation</option>
-              <option>Agent DSB</option>
-              <option>Autre</option>
-            </select>
+            <label>Téléphone <span class="hint">Facultatif</span></label>
+            <input type="tel" id="dem_tel" placeholder="0692 XX XX XX">
           </div>
-        </div>
-        <div class="field">
-          <label>Adresse email <span class="req">*</span><span class="hint">Pour recevoir la confirmation</span></label>
-          <input type="email" id="dem_email" placeholder="prenom.nom@mairie-saintdenis.fr" required>
-        </div>
-        <div class="field">
-          <label>Téléphone <span class="hint">Facultatif</span></label>
-          <input type="tel" id="dem_tel" placeholder="0692 XX XX XX">
         </div>
       </div>
     </div>
@@ -140,38 +149,50 @@
     <div class="section-card">
       <div class="section-header"><div class="section-num">2</div><h2>École concernée</h2></div>
       <div class="section-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Secteur <span class="req">*</span></label>
-            <select id="secteur" required onchange="majEcoles()">
-              <option value="">-- Sélectionner --</option>
-              <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
-              <option>BRETAGNE</option><option>BRÛLÉ</option>
-              <option>CENTRE VILLE</option><option>CAMÉLIAS</option>
-              <option>CHAUDRON</option><option>DOMENJOD</option>
-              <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
-              <option>MONTGAILLARD</option><option>MOUFIA</option>
-              <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇOIS</option>
-              <option>SAINTE CLOTILDE</option><option>SOURCE</option>
-            </select>
+        <!-- Mode verrouillé : école identifiée par email -->
+        <div id="ecole-verrouillee" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:14px 16px;font-size:13px;color:var(--texte);line-height:1.9;margin-bottom:14px;">
+          <div style="font-weight:600;color:var(--vert);margin-bottom:8px;">🔒 École identifiée automatiquement</div>
+          <div>🏫 <strong id="verr-nom"></strong></div>
+          <div>🗺️ <span id="verr-adresse"></span></div>
+          <div>📞 <span id="verr-tel"></span></div>
+          <div>✉️ <span id="verr-mail"></span></div>
+          <input type="hidden" id="secteur" value="">
+          <input type="hidden" id="ecole" value="">
+        </div>
+        <!-- Mode libre : choix manuel (agent DE) -->
+        <div id="ecole-libre">
+          <div class="field-row">
+            <div class="field">
+              <label>Secteur <span class="req">*</span></label>
+              <select id="secteur-select" onchange="majEcoles()">
+                <option value="">-- Sélectionner --</option>
+                <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
+                <option>BRETAGNE</option><option>BRÛLÉ</option>
+                <option>CENTRE VILLE</option><option>CAMÉLIAS</option>
+                <option>CHAUDRON</option><option>DOMENJOD</option>
+                <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
+                <option>MONTGAILLARD</option><option>MOUFIA</option>
+                <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇAIS</option>
+                <option>SAINTE CLOTILDE</option><option>SOURCE</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>École <span class="req">*</span></label>
+              <select id="ecole-select" onchange="majFicheEcole()">
+                <option value="">-- Choisir le secteur d'abord --</option>
+              </select>
+            </div>
           </div>
-          <div class="field">
-            <label>École <span class="req">*</span></label>
-            <select id="ecole" required onchange="majFicheEcole()">
-              <option value="">-- Choisir le secteur d'abord --</option>
-            </select>
+          <div id="fiche-ecole" style="display:none;background:var(--bleu-pale);border:1px solid #CBD5E1;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--texte);line-height:1.8;margin-top:10px;">
+            <div style="font-weight:600;color:var(--bleu);margin-bottom:6px;">📍 Coordonnées de l'école</div>
+            <div>🏠 <span id="fiche-adresse"></span></div>
+            <div>📞 <span id="fiche-tel"></span></div>
+            <div>✉️ <span id="fiche-mail"></span></div>
           </div>
         </div>
-        <div class="field">
+        <div class="field" style="margin-top:14px;">
           <label>Localisation précise <span class="hint">Facultatif</span></label>
           <input type="text" id="localisation" placeholder="Ex : Salle B3, toiture aile Est, cantine…">
-        </div>
-        <!-- Fiche école -->
-        <div id="fiche-ecole" style="display:none;background:var(--bleu-pale);border:1px solid #CBD5E1;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--texte);line-height:1.8;">
-          <div style="font-weight:600;color:var(--bleu);margin-bottom:6px;">📍 Coordonnées de l'école</div>
-          <div>🏠 <span id="fiche-adresse"></span></div>
-          <div>📞 <span id="fiche-tel"></span></div>
-          <div>✉️ <span id="fiche-mail"></span></div>
         </div>
       </div>
     </div>
@@ -387,6 +408,89 @@ const TYPES_PAR_CELLULE={
   'Dératisation et traitement 3D':['Demande de dératisation','Demande de désinsectisation','Demande de dératisation et désinsectisation','Demande d\'intervention pour l\'entretien des pièges','Diverse'],
 };
 
+// Domaines autorisés
+const DOMAINES_ECOLE = '@ac-reunion.fr';
+const DOMAINES_DE = ['@mairie-saintdenis.fr', '@ville-saintdenis.fr', '@st-denis.re'];
+
+// Variable globale : données de l'école identifiée
+let _ecoleIdentifiee = null; // {secteur, nom, adresse, tel, mail} ou null
+let _modeLibre = false;
+
+function verifierEmail(email){
+  const statusEl = document.getElementById('email-status');
+  const msgEl = document.getElementById('email-msg');
+  const suiteEl = document.getElementById('suite-identification');
+  const badgeEl = document.getElementById('badge-ecole');
+
+  if(!email || !email.includes('@')){
+    statusEl.textContent = '';
+    msgEl.style.display = 'none';
+    suiteEl.style.display = 'none';
+    return;
+  }
+
+  // Chercher dans ECOLES_DATA si l'email correspond à une école
+  let ecoleFound = null;
+  for(const [secteur, ecoles] of Object.entries(ECOLES_DATA)){
+    for(const e of ecoles){
+      if(e.mail && e.mail.toLowerCase() === email.toLowerCase()){
+        ecoleFound = {...e, secteur};
+        break;
+      }
+    }
+    if(ecoleFound) break;
+  }
+
+  if(ecoleFound){
+    // Mode verrouillé : email d'école reconnu
+    _ecoleIdentifiee = ecoleFound;
+    _modeLibre = false;
+    statusEl.textContent = '✅';
+    msgEl.style.display = 'none';
+    // Remplir la section 2 verrouillée
+    document.getElementById('verr-nom').textContent = ecoleFound.label;
+    document.getElementById('verr-adresse').textContent = ecoleFound.adresse || '—';
+    document.getElementById('verr-tel').textContent = ecoleFound.tel || '—';
+    document.getElementById('verr-mail').textContent = ecoleFound.mail;
+    document.getElementById('secteur').value = ecoleFound.secteur;
+    document.getElementById('ecole').value = ecoleFound.nom;
+    document.getElementById('ecole-verrouillee').style.display = 'block';
+    document.getElementById('ecole-libre').style.display = 'none';
+    // Badge dans section 1
+    document.getElementById('badge-nom-ecole').textContent = ecoleFound.label + ' — ' + ecoleFound.secteur;
+    badgeEl.style.display = 'block';
+    suiteEl.style.display = 'block';
+    majProgression();
+  } else {
+    // Vérifier si c'est un email DE (agent direction)
+    const isDE = DOMAINES_DE.some(d => email.toLowerCase().endsWith(d));
+    if(isDE){
+      // Mode libre
+      _ecoleIdentifiee = null;
+      _modeLibre = true;
+      statusEl.textContent = '✅';
+      msgEl.style.display = 'none';
+      badgeEl.style.display = 'none';
+      document.getElementById('ecole-verrouillee').style.display = 'none';
+      document.getElementById('ecole-libre').style.display = 'block';
+      suiteEl.style.display = 'block';
+      majProgression();
+    } else if(email.includes('@') && email.includes('.')){
+      // Email complet mais non reconnu → erreur
+      _ecoleIdentifiee = null;
+      _modeLibre = false;
+      statusEl.textContent = '❌';
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'var(--rouge-pale)';
+      msgEl.style.color = 'var(--rouge)';
+      msgEl.style.border = '1px solid #F5B7B1';
+      msgEl.textContent = '⛔ Adresse email non reconnue. Utilisez l\'email de votre école (ce.XXXXXXX@ac-reunion.fr) ou votre email de la Direction de l\'Éducation.';
+      badgeEl.style.display = 'none';
+      suiteEl.style.display = 'none';
+    }
+  }
+}
+
 function majTypes(){
   const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
   const sel=document.getElementById('type_travaux');
@@ -408,8 +512,9 @@ function majTypes(){
 document.getElementById('date_souhaitee').min=new Date().toISOString().split('T')[0];
 
 function majEcoles(){
-  const s=document.getElementById('secteur').value;
-  const el=document.getElementById('ecole');
+  const s=document.getElementById('secteur-select').value;
+  document.getElementById('secteur').value=s;
+  const el=document.getElementById('ecole-select');
   el.innerHTML='<option value="">-- Sélectionner une école --</option>';
   document.getElementById('fiche-ecole').style.display='none';
   if(s&&ECOLES_DATA[s]){
@@ -420,12 +525,13 @@ function majEcoles(){
       el.appendChild(o);
     });
   }
+  document.getElementById('ecole').value='';
   majProgression();
 }
 
 function majFicheEcole(){
-  const s=document.getElementById('secteur').value;
-  const idx=document.getElementById('ecole').value;
+  const s=document.getElementById('secteur-select').value;
+  const idx=document.getElementById('ecole-select').value;
   const fiche=document.getElementById('fiche-ecole');
   if(s&&idx!==''&&ECOLES_DATA[s]){
     const e=ECOLES_DATA[s][parseInt(idx)];
@@ -433,24 +539,27 @@ function majFicheEcole(){
     document.getElementById('fiche-tel').textContent=e.tel||'—';
     document.getElementById('fiche-mail').textContent=e.mail||'—';
     fiche.style.display='block';
+    document.getElementById('ecole').value=e.nom;
   } else {
     fiche.style.display='none';
+    document.getElementById('ecole').value='';
   }
   majProgression();
 }
 
 function majProgression(){
-  const s1=document.getElementById('dem_nom').value&&document.getElementById('dem_role').value&&document.getElementById('dem_email').value;
-  const s2=document.getElementById('secteur').value&&document.getElementById('ecole').value;
+  const emailOk = _ecoleIdentifiee!==null || _modeLibre;
+  const s1=document.getElementById('dem_nom')?.value&&document.getElementById('dem_role')?.value&&emailOk;
+  const s2=document.getElementById('secteur')?.value&&document.getElementById('ecole')?.value;
   const s3=document.querySelector('input[name=cellule]:checked');
-  const s4=document.getElementById('type_travaux').value&&document.getElementById('description').value;
+  const s4=document.getElementById('type_travaux')?.value&&document.getElementById('description')?.value;
   ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{
     document.getElementById(id).classList.toggle('done',[s1,s2,s3,s4][i]);
     document.getElementById('pl'+(i+1)).classList.toggle('active',[s1,s2,s3,s4][i]);
   });
 }
 document.querySelectorAll('input[name=cellule]').forEach(el=>el.addEventListener('change',()=>{majTypes();majProgression();}));
-document.querySelectorAll('input[type=text],input[type=email],input[type=tel],textarea').forEach(el=>el.addEventListener('input',majProgression));
+document.querySelectorAll('input[type=text],input[type=tel],textarea').forEach(el=>el.addEventListener('input',majProgression));
 
 function previewPhotos(input){
   const preview=document.getElementById('uploadPreview');
@@ -480,8 +589,7 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
 
   const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
   const secteur=document.getElementById('secteur').value;
-  const ecoleIdx=document.getElementById('ecole').value;
-  const ecoleData=(secteur&&ecoleIdx!==''&&ECOLES_DATA[secteur])?ECOLES_DATA[secteur][parseInt(ecoleIdx)]:null;
+  const ecoleNom=document.getElementById('ecole').value;
 
   let photosData=null;
   const photoInput=document.getElementById('photoInput');
@@ -499,7 +607,7 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
     demandeur_email:document.getElementById('dem_email').value,
     demandeur_tel:document.getElementById('dem_tel').value||null,
     secteur:secteur,
-    ecole:ecoleData?.nom||'',
+    ecole:ecoleNom,
     localisation:document.getElementById('localisation').value||null,
     cellule:cellule,
     type_travaux:document.getElementById('type_travaux').value,
@@ -536,11 +644,22 @@ function resetForm(){
   document.getElementById('mainForm').reset();
   document.getElementById('mainForm').style.display='block';
   document.getElementById('success-msg').style.display='none';
-  document.getElementById('ecole').innerHTML='<option value="">-- Choisir le secteur d\'abord --</option>';
   document.getElementById('uploadPreview').innerHTML='';
   document.querySelectorAll('.prog-step').forEach(s=>s.classList.remove('done'));
+  // Réinitialiser l'identification par email
+  _ecoleIdentifiee=null; _modeLibre=false;
+  document.getElementById('suite-identification').style.display='none';
+  document.getElementById('badge-ecole').style.display='none';
+  document.getElementById('email-status').textContent='';
+  document.getElementById('email-msg').style.display='none';
+  document.getElementById('ecole-verrouillee').style.display='none';
+  document.getElementById('ecole-libre').style.display='block';
+  document.getElementById('ecole-select').innerHTML='<option value="">-- Choisir le secteur d\'abord --</option>';
+  document.getElementById('fiche-ecole').style.display='none';
+  document.getElementById('secteur').value='';
+  document.getElementById('ecole').value='';
 }
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.5 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.6 — 17/03/2026</div>
 </body>
 </html>
