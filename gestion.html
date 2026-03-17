@@ -107,12 +107,16 @@
   .b-haute{background:var(--orange-pale);color:var(--orange);}
   .b-normale{background:var(--jaune-pale);color:var(--jaune);}
   .b-basse{background:var(--gris-pale);color:var(--gris);}
-  .statut-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-  .s-nouveau{background:var(--bleu-pale);color:var(--bleu);}
-  .s-en_cours{background:var(--orange-pale);color:var(--orange);}
-  .s-en_attente{background:var(--jaune-pale);color:var(--jaune);}
-  .s-resolu{background:var(--vert-pale);color:var(--vert);}
+  /* Statuts enrichis — 7 niveaux */
+  .statut-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+  .s-nouveau{background:#DBEAFE;color:#1D4ED8;}
+  .s-en_cours{background:#FEF3C7;color:#B45309;}
+  .s-en_attente_pieces{background:#F3E8FF;color:#7E22CE;}
+  .s-en_attente_devis{background:#FCE7F3;color:#BE185D;}
+  .s-planifie{background:#D1FAE5;color:#065F46;}
+  .s-resolu{background:#DCFCE7;color:#166534;}
   .s-annule{background:var(--gris-pale);color:var(--gris);}
+  .s-rouvert{background:#FEE2E2;color:#991B1B;}
   .delai{font-size:11px;white-space:nowrap;}
   .delai.ok{color:var(--gris);}
   .delai.warn{color:var(--orange);font-weight:600;}
@@ -247,8 +251,11 @@
         <div class="stat-card" onclick="resetFiltres()"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Total</div></div>
         <div class="stat-card s-urgente" onclick="filtrer('prio','urgente')"><div class="stat-num" id="statUrgente">–</div><div class="stat-label">Urgents</div></div>
         <div class="stat-card s-nouveau" onclick="filtrer('statut','nouveau')"><div class="stat-num" id="statNouveau">–</div><div class="stat-label">Nouveaux</div></div>
-        <div class="stat-card s-encours" onclick="filtrer('statut','en_cours')"><div class="stat-num" id="statEncours">–</div><div class="stat-label">En cours</div></div>
+        <div class="stat-card s-encours" onclick="filtrer('statut','en_cours')"><div class="stat-num" id="statEncours">–</div><div class="stat-label">En cours / Att.</div></div>
         <div class="stat-card s-retard" onclick="filtrerRetard()"><div class="stat-num" id="statRetard">–</div><div class="stat-label">En retard (&gt;7j)</div></div>
+        <div class="stat-card s-resolu" onclick="filtrer('statut','resolu')"><div class="stat-num" id="statResolu">–</div><div class="stat-label">Résolus</div></div>
+        <div class="stat-card" style="cursor:default"><div class="stat-num" id="statTauxResolution" style="font-size:18px;">–%</div><div class="stat-label">Taux résolution</div></div>
+        <div class="stat-card" style="cursor:default"><div class="stat-num" id="statDelaiMoyen" style="font-size:18px;">–j</div><div class="stat-label">Délai moyen</div></div>
       </div>
 
       <div class="filters-bar">
@@ -256,8 +263,15 @@
         <div class="filter-sep"></div>
         <select id="filterStatut" onchange="renderTable()">
           <option value="">Tous statuts</option>
-          <option value="nouveau">Nouveau</option><option value="en_cours">En cours</option>
-          <option value="en_attente">En attente</option><option value="resolu">Résolu</option><option value="annule">Annulé</option>
+<option value="">Tous statuts</option>
+          <option value="nouveau">🔵 Nouveau</option>
+          <option value="en_cours">🟡 En cours</option>
+          <option value="en_attente_pieces">🟣 En attente — Pièces</option>
+          <option value="en_attente_devis">🔴 En attente — Devis</option>
+          <option value="planifie">🟢 Planifié</option>
+          <option value="resolu">✅ Résolu</option>
+          <option value="annule">⚫ Annulé</option>
+          <option value="rouvert">🔄 Rouvert</option>
         </select>
         <select id="filterPriorite" onchange="renderTable()">
           <option value="">Toutes priorités</option>
@@ -390,8 +404,14 @@
       <div class="modal-actions">
         <div><label>Statut</label>
           <select id="mStatut">
-            <option value="nouveau">Nouveau</option><option value="en_cours">En cours</option>
-            <option value="en_attente">En attente</option><option value="resolu">Résolu</option><option value="annule">Annulé</option>
+<option value="nouveau">🔵 Nouveau</option>
+            <option value="en_cours">🟡 En cours</option>
+            <option value="en_attente_pieces">🟣 En attente — Pièces</option>
+            <option value="en_attente_devis">🔴 En attente — Devis</option>
+            <option value="planifie">🟢 Planifié</option>
+            <option value="resolu">✅ Résolu</option>
+            <option value="annule">⚫ Annulé</option>
+            <option value="rouvert">🔄 Rouvert</option>
           </select>
         </div>
         <div><label>Priorité</label>
@@ -556,13 +576,22 @@ async function chargerTickets(){
 function majStats(){
   const t=allTickets;
   const retard=t.filter(x=>!['resolu','annule'].includes(x.statut)&&calcDelaiJours(x.created_at)>7);
+  const resolus=t.filter(x=>x.statut==='resolu');
   document.getElementById('statTotal').textContent=t.length;
   const urgents=t.filter(x=>x.priorite==='urgente'&&!['resolu','annule'].includes(x.statut)).length;
   const nouveaux=t.filter(x=>x.statut==='nouveau').length;
   document.getElementById('statUrgente').textContent=urgents;
   document.getElementById('statNouveau').textContent=nouveaux;
-  document.getElementById('statEncours').textContent=t.filter(x=>x.statut==='en_cours').length;
+  document.getElementById('statEncours').textContent=t.filter(x=>['en_cours','en_attente_pieces','en_attente_devis','rouvert'].includes(x.statut)).length;
   document.getElementById('statRetard').textContent=retard.length;
+  document.getElementById('statResolu').textContent=resolus.length;
+  // Taux de résolution
+  const taux=t.length>0?Math.round(resolus.length/t.length*100):0;
+  document.getElementById('statTauxResolution').textContent=taux+'%';
+  // Délai moyen (tickets actifs uniquement)
+  const actifs=t.filter(x=>!['resolu','annule'].includes(x.statut));
+  const delaiMoyen=actifs.length>0?Math.round(actifs.reduce((s,x)=>s+calcDelaiJours(x.created_at),0)/actifs.length):0;
+  document.getElementById('statDelaiMoyen').textContent=delaiMoyen+'j';
   document.getElementById('badgeUrgence').style.display=urgents>0?'block':'none';
   document.getElementById('countUrgent').textContent=urgents;
   document.getElementById('badgeNew').style.display=nouveaux>0?'block':'none';
@@ -576,6 +605,7 @@ function majStats(){
 function calcDelaiJours(created_at){return Math.floor((Date.now()-new Date(created_at))/86400000);}
 function calcDelai(created_at,statut){
   if(['resolu','annule'].includes(statut)) return{txt:'Clôturé',cls:'ok'};
+  if(statut==='planifie') return{txt:'Planifié',cls:'ok'};
   const d=calcDelaiJours(created_at);
   if(d===0) return{txt:"Aujourd'hui",cls:'ok'};
   if(d===1) return{txt:'1 jour',cls:'ok'};
@@ -638,7 +668,7 @@ function renderTable(){
   });
 
   const prioO={urgente:0,haute:1,normale:2,basse:3};
-  const statO={nouveau:0,en_cours:1,en_attente:2,resolu:3,annule:4};
+  const statO={nouveau:0,rouvert:1,en_cours:2,en_attente_pieces:3,en_attente_devis:4,planifie:5,resolu:6,annule:7,en_attente:3};
   filtered.sort((a,b)=>{
     let va,vb;
     if(sortCol==='priorite'){va=prioO[a.priorite]??9;vb=prioO[b.priorite]??9;}
@@ -656,22 +686,41 @@ function renderTable(){
     const isNew=new Date(t.created_at).getTime()>cutoff&&t.statut==='nouveau';
     const date=new Date(t.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
     const delai=calcDelai(t.created_at,t.statut);
+    const peutRelancer=!['resolu','annule'].includes(t.statut)&&calcDelaiJours(t.created_at)>3&&(currentUser?.role==='secretaire'||currentUser?.role==='direction');
     return `<tr class="${t.priorite==='urgente'?'urgente':isNew?'is-new':''}">
       <td><div class="ticket-id">${t.id.slice(0,8).toUpperCase()}</div></td>
       <td><div class="ticket-ecole">${isNew?'<span class="new-dot"></span>':''}${t.photos?'📷 ':''}${t.ecole||'–'}</div><div class="ticket-secteur">${t.secteur||''}</div></td>
       <td><span class="cellule-tag">${t.cellule||'–'}</span></td>
-      <td><div class="ticket-desc" title="${(t.description||'').replace(/"/g,'&quot;')}">${t.description||'–'}</div></td>
+      <td><div class="ticket-desc" title="${(t.description||'').replace(/"/g,'&quot;')}">${t.type_travaux?'<span style="font-size:11px;color:var(--bleu);display:block;">'+t.type_travaux+'</span>':''}${t.description||'–'}</div></td>
       <td>${prioriteBadge(t.priorite)}</td>
       <td>${statutBadge(t.statut)}</td>
       <td><div class="delai ${delai.cls}">${delai.txt}</div></td>
       <td><div class="date-cell">${date}</div></td>
-      <td><button class="btn-detail" onclick="ouvrirModal('${t.id}')">Détail →</button></td>
+      <td style="white-space:nowrap;display:flex;gap:4px;align-items:center;">
+        <button class="btn-detail" onclick="ouvrirModal('${t.id}')">Détail →</button>
+        ${peutRelancer?`<button class="btn-relancer" title="Relancer ce ticket" onclick="relancerTicket('${t.id}','${(t.cellule||'').replace(/'/g,"\\'")}','${(t.ecole||'').replace(/'/g,"\\'")}')">📬</button>`:''}
+      </td>
     </tr>`;
   }).join('');
 }
 
 function prioriteBadge(p){const m={urgente:['🔴','b-urgente','Urgente'],haute:['🟠','b-haute','Haute'],normale:['🟡','b-normale','Normale'],basse:['⚫','b-basse','Basse']};const[i,c,l]=m[p]||['','b-basse',p||'–'];return`<span class="badge ${c}">${i} ${l}</span>`;}
-function statutBadge(s){const m={nouveau:'Nouveau',en_cours:'En cours',en_attente:'En attente',resolu:'Résolu',annule:'Annulé'};return`<span class="statut-badge s-${s}">${m[s]||s}</span>`;}
+function statutBadge(s){
+  const m={
+    'nouveau':       {icon:'🔵', label:'Nouveau'},
+    'en_cours':      {icon:'🟡', label:'En cours'},
+    'en_attente_pieces':{icon:'🟣', label:'Att. pièces'},
+    'en_attente_devis':  {icon:'🔴', label:'Att. devis'},
+    'planifie':      {icon:'🟢', label:'Planifié'},
+    'resolu':        {icon:'✅', label:'Résolu'},
+    'annule':        {icon:'⚫', label:'Annulé'},
+    'rouvert':       {icon:'🔄', label:'Rouvert'},
+    // Rétrocompatibilité ancien statut
+    'en_attente':    {icon:'🟡', label:'En attente'},
+  };
+  const d=m[s]||{icon:'❓',label:s};
+  return`<span class="statut-badge s-${s}">${d.icon} ${d.label}</span>`;
+}
 
 // ─── MODAL ───────────────────────────────────────────────────
 function ouvrirModal(id){
@@ -777,26 +826,59 @@ function renderRelance(){
 }
 
 // ─── EMAILJS ALERTES ─────────────────────────────────────────
+function _initEmailJS(){
+  if(EMAILJS_PUBLIC_KEY==='YOUR_PUBLIC_KEY'){
+    showToast('EmailJS non configuré.','warning');
+    return false;
+  }
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  return true;
+}
+
+// Relance groupée par cellule (onglet Relances)
 function envoyerRelance(cellule, nb){
-  // Trouver l'email du référent de cette cellule
   const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
   const email=compte?.email;
   if(!email){
-    showToast(`Aucun email configuré pour "${cellule}". Modifiez le fichier admin.html.`,'warning');
+    showToast(`Aucun email configuré pour "${cellule}".`,'warning');
     return;
   }
-  if(EMAILJS_PUBLIC_KEY==='YOUR_PUBLIC_KEY'){
-    showToast('EmailJS non configuré — voir admin.html pour paramétrer.','warning');
-    return;
-  }
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+  if(!_initEmailJS()) return;
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
     to_email: email,
     cellule: cellule,
     nb_retard: nb,
     date: new Date().toLocaleDateString('fr-FR'),
     lien_gestion: window.location.href
-  }).then(()=>showToast(`Relance envoyée à ${email}`,'success'))
+  }).then(()=>showToast(`✅ Relance envoyée à ${email}`,'success'))
+    .catch(()=>showToast('Erreur lors de l\'envoi du mail','error'));
+}
+
+// Relance individuelle par ticket (bouton 📬 dans le tableau)
+function relancerTicket(ticketId, cellule, ecole){
+  const t=allTickets.find(x=>x.id===ticketId);
+  if(!t) return;
+  const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
+  const email=compte?.email;
+  if(!email){
+    showToast(`Aucun email configuré pour "${cellule}".`,'warning');
+    return;
+  }
+  if(!_initEmailJS()) return;
+  const ref=t.id.slice(0,8).toUpperCase();
+  const delai=calcDelaiJours(t.created_at);
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
+    to_email: email,
+    cellule: cellule,
+    nb_retard: 1,
+    date: new Date().toLocaleDateString('fr-FR'),
+    lien_gestion: window.location.href+'#'+ref,
+    ecole: ecole,
+    ref_ticket: ref,
+    description: t.description||'',
+    priorite: t.priorite||'',
+    nb_jours: delai
+  }).then(()=>showToast(`✅ Relance ticket ${ref} envoyée à ${email}`,'success'))
     .catch(()=>showToast('Erreur lors de l\'envoi du mail','error'));
 }
 
@@ -820,32 +902,47 @@ function exportCSV(){
 
 // ─── STATS ───────────────────────────────────────────────────
 function renderStats(){
+  const t=allTickets;
+  // Graphique statuts enrichis
   renderBarChart('chartStatut',[
-    {label:'Nouveau',val:allTickets.filter(t=>t.statut==='nouveau').length,color:'#2E5FA3'},
-    {label:'En cours',val:allTickets.filter(t=>t.statut==='en_cours').length,color:'#D4700A'},
-    {label:'En attente',val:allTickets.filter(t=>t.statut==='en_attente').length,color:'#B7860A'},
-    {label:'Résolu',val:allTickets.filter(t=>t.statut==='resolu').length,color:'#1A7A5E'},
-    {label:'Annulé',val:allTickets.filter(t=>t.statut==='annule').length,color:'#64748B'},
+    {label:'🔵 Nouveau',       val:t.filter(x=>x.statut==='nouveau').length,           color:'#1D4ED8'},
+    {label:'🔄 Rouvert',       val:t.filter(x=>x.statut==='rouvert').length,           color:'#991B1B'},
+    {label:'🟡 En cours',      val:t.filter(x=>x.statut==='en_cours').length,          color:'#B45309'},
+    {label:'🟣 Att. pièces',   val:t.filter(x=>x.statut==='en_attente_pieces').length, color:'#7E22CE'},
+    {label:'🔴 Att. devis',    val:t.filter(x=>x.statut==='en_attente_devis').length,  color:'#BE185D'},
+    {label:'🟢 Planifié',      val:t.filter(x=>x.statut==='planifie').length,          color:'#065F46'},
+    {label:'✅ Résolu',         val:t.filter(x=>x.statut==='resolu').length,            color:'#166534'},
+    {label:'⚫ Annulé',         val:t.filter(x=>x.statut==='annule').length,            color:'#64748B'},
   ]);
+  // Priorités
   renderBarChart('chartPriorite',[
-    {label:'🔴 Urgente',val:allTickets.filter(t=>t.priorite==='urgente').length,color:'#C0392B'},
-    {label:'🟠 Haute',val:allTickets.filter(t=>t.priorite==='haute').length,color:'#D4700A'},
-    {label:'🟡 Normale',val:allTickets.filter(t=>t.priorite==='normale').length,color:'#B7860A'},
-    {label:'⚫ Basse',val:allTickets.filter(t=>t.priorite==='basse').length,color:'#64748B'},
+    {label:'🔴 Urgente', val:t.filter(x=>x.priorite==='urgente').length, color:'#C0392B'},
+    {label:'🟠 Haute',   val:t.filter(x=>x.priorite==='haute').length,   color:'#D4700A'},
+    {label:'🟡 Normale', val:t.filter(x=>x.priorite==='normale').length, color:'#B7860A'},
+    {label:'⚫ Basse',   val:t.filter(x=>x.priorite==='basse').length,   color:'#64748B'},
   ]);
-  const cc={};allTickets.forEach(t=>{if(t.cellule)cc[t.cellule]=(cc[t.cellule]||0)+1;});
+  // Par cellule
+  const cc={};t.forEach(x=>{if(x.cellule)cc[x.cellule]=(cc[x.cellule]||0)+1;});
   renderBarChart('chartCellule',Object.entries(cc).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({label:l,val:v,color:'#5B21B6'})));
-  const sc={};allTickets.forEach(t=>{if(t.secteur)sc[t.secteur]=(sc[t.secteur]||0)+1;});
-  renderBarChart('chartSecteur',Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([l,v])=>({label:l,val:v,color:'#1A7A5E'})));
-  const mc={};allTickets.forEach(t=>{const d=new Date(t.created_at);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;mc[k]=(mc[k]||0)+1;});
+  // Par secteur
+  const sc={};t.forEach(x=>{if(x.secteur)sc[x.secteur]=(sc[x.secteur]||0)+1;});
+  renderBarChart('chartSecteur',Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([l,v])=>({label:l,val:v,color:'#1A7A5E'})));
+  // Évolution mensuelle (créations + résolutions)
+  const mc={};const mr={};
   const ml={'01':'Jan','02':'Fév','03':'Mar','04':'Avr','05':'Mai','06':'Jun','07':'Jul','08':'Aoû','09':'Sep','10':'Oct','11':'Nov','12':'Déc'};
+  t.forEach(x=>{
+    const d=new Date(x.created_at);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    mc[k]=(mc[k]||0)+1;
+  });
   renderBarChart('chartMois',Object.entries(mc).sort((a,b)=>a[0].localeCompare(b[0])).slice(-12).map(([k,v])=>({label:`${ml[k.slice(5)]} ${k.slice(2,4)}`,val:v,color:'#1B3F6E'})));
 }
 function renderBarChart(id,data){
   const el=document.getElementById(id);if(!el)return;
   const max=Math.max(...data.map(d=>d.val),1);
-  el.innerHTML=data.map(d=>`<div class="bar-row"><div class="bar-label">${d.label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(d.val/max*100)}%;background:${d.color}"><span>${d.val>0?d.val:''}</span></div></div><div class="bar-val">${d.val}</div></div>`).join('');
+  el.innerHTML=data.filter(d=>d.val>=0).map(d=>`<div class="bar-row"><div class="bar-label">${d.label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(Math.round(d.val/max*100),d.val>0?4:0)}%;background:${d.color}"><span>${d.val>0?d.val:''}</span></div></div><div class="bar-val">${d.val}</div></div>`).join('');
 }
+
 
 // ─── TOAST / LIGHTBOX ────────────────────────────────────────
 let tt;
@@ -854,6 +951,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.3 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.4 — 17/03/2026</div>
 </body>
 </html>
