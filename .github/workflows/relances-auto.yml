@@ -1,0 +1,104 @@
+name: Relances automatiques tickets maintenance
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  relancer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Envoyer les relances EmailJS
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          REFERENTS: ${{ secrets.REFERENTS }}
+          BASE_URL: https://nightworms.github.io/ticketing-ecoles
+        run: |
+          node - << 'NODEOF'
+          const https = require('https');
+
+          const SUPABASE_URL    = process.env.SUPABASE_URL;
+          const SUPABASE_KEY    = process.env.SUPABASE_KEY;
+          const EMAILJS_SVC     = process.env.EMAILJS_SERVICE_ID;
+          const EMAILJS_TPL     = process.env.EMAILJS_TEMPLATE_ID;
+          const EMAILJS_KEY     = process.env.EMAILJS_PRIVATE_KEY;
+          const BASE_URL        = process.env.BASE_URL;
+          const REFERENTS       = JSON.parse(process.env.REFERENTS || '{}');
+
+          function request(options, body) {
+            return new Promise((resolve, reject) => {
+              const req = https.request(options, res => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => resolve({ status: res.statusCode, body: data }));
+              });
+              req.on('error', reject);
+              if (body) req.write(typeof body === 'string' ? body : JSON.stringify(body));
+              req.end();
+            });
+          }
+
+          async function main() {
+            const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+            const path = '/rest/v1/tickets?select=id,ecole,secteur,cellule,type_travaux,description,priorite,statut,created_at,token_cloture&statut=not.in.(resolu,annule)&created_at=lt.' + sevenDaysAgo;
+
+            const res = await request({
+              hostname: new URL(SUPABASE_URL).hostname,
+              path,
+              method: 'GET',
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' }
+            });
+
+            const tickets = JSON.parse(res.body);
+            console.log(tickets.length + ' ticket(s) en retard (> 7 jours)');
+            if (tickets.length === 0) { console.log('Aucune relance.'); return; }
+
+            const parCellule = {};
+            for (const t of tickets) {
+              const c = t.cellule || 'Non défini';
+              if (!parCellule[c]) parCellule[c] = [];
+              parCellule[c].push(t);
+            }
+
+            for (const [cellule, ticketsCellule] of Object.entries(parCellule)) {
+              const referent = REFERENTS[cellule];
+              if (!referent?.email) { console.log('Pas email pour: ' + cellule); continue; }
+
+              const lignesTickets = ticketsCellule.map(t => {
+                const ref = t.id.slice(0, 8).toUpperCase();
+                const jours = Math.floor((Date.now() - new Date(t.created_at)) / 86400000);
+                const lien = t.token_cloture ? BASE_URL + '/cloture.html?token=' + t.token_cloture : BASE_URL + '/gestion.html';
+                return '- ' + ref + ' | ' + (t.ecole || '-') + ' | ' + (t.type_travaux || (t.description || '').slice(0,50)) + ' | ' + jours + 'j\n  Cloture: ' + lien;
+              }).join('\n\n');
+
+              const payload = JSON.stringify({
+                service_id: EMAILJS_SVC, template_id: EMAILJS_TPL, user_id: EMAILJS_KEY,
+                template_params: {
+                  to_email: referent.email, to_name: referent.nom || cellule,
+                  cellule, nb_retard: String(ticketsCellule.length),
+                  date: new Date().toLocaleDateString('fr-FR'),
+                  lien_gestion: BASE_URL + '/gestion.html',
+                  liste_tickets: lignesTickets
+                }
+              });
+
+              const emailRes = await request({
+                hostname: 'api.emailjs.com', path: '/api/v1.0/email/send', method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload), 'origin': 'http://localhost' }
+              }, payload);
+
+              if (emailRes.status === 200) console.log('Relance OK -> ' + referent.email + ' (' + ticketsCellule.length + ' tickets)');
+              else console.error('Erreur EmailJS ' + cellule + ': ' + emailRes.body);
+
+              await new Promise(r => setTimeout(r, 600));
+            }
+            console.log('Terminé.');
+          }
+
+          main().catch(e => { console.error(e); process.exit(1); });
+          NODEOF
