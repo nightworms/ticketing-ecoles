@@ -178,8 +178,7 @@
           <div class="cellule-option"><input type="radio" name="cellule" id="c2" value="Informatique"><label class="cellule-label" for="c2"><span class="cell-icon">💻</span>Informatique</label></div>
           <div class="cellule-option"><input type="radio" name="cellule" id="c3" value="Mobilier"><label class="cellule-label" for="c3"><span class="cell-icon">🪑</span>Mobilier</label></div>
           <div class="cellule-option"><input type="radio" name="cellule" id="c4" value="Ventilateur / Brasseur d'air"><label class="cellule-label" for="c4"><span class="cell-icon">🌀</span>Ventilateur / Brasseur d'air</label></div>
-          <div class="cellule-option"><input type="radio" name="cellule" id="c5" value="Couture / Textile"><label class="cellule-label" for="c5"><span class="cell-icon">🧵</span>Couture / Textile</label></div>
-          <div class="cellule-option"><input type="radio" name="cellule" id="c6" value="Rideau / Double des clés"><label class="cellule-label" for="c6"><span class="cell-icon">🔑</span>Rideau / Double des clés</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c5" value="Couture / Textile — Rideau / Double des clés"><label class="cellule-label" for="c5"><span class="cell-icon">🧵🔑</span>Couture / Textile — Rideau / Clés</label></div>
           <div class="cellule-option"><input type="radio" name="cellule" id="c7" value="DTP"><label class="cellule-label" for="c7"><span class="cell-icon">🏗️</span>DTP</label></div>
           <div class="cellule-option"><input type="radio" name="cellule" id="c8" value="DSB"><label class="cellule-label" for="c8"><span class="cell-icon">🔧</span>DSB</label></div>
           <div class="cellule-option"><input type="radio" name="cellule" id="c9" value="Élagage et abattage d'arbres"><label class="cellule-label" for="c9"><span class="cell-icon">🌳</span>Élagage / Abattage d'arbres</label></div>
@@ -282,17 +281,16 @@ const ECOLES={
 };
 
 const TYPES_PAR_CELLULE={
-  'Restauration scolaire':['Équipement cuisine','Mobilier cantine','Réfrigération / froid','Hygiène et nettoyage','Plonge / vaisselle','Urgence restauration','Autre'],
-  'Informatique':['Panne matériel (PC, tablette…)','Réseau / connexion internet','Logiciel / installation','Vidéoprojecteur / écran','Imprimante','Téléphonie','Urgence informatique','Autre'],
-  'Mobilier':['Réparation mobilier','Remplacement mobilier','Nouveau mobilier','Mobilier de cour','Urgence mobilier','Autre'],
-  'Ventilateur / Brasseur d\'air':['Brasseur d\'air — panne','Brasseur d\'air — installation','Pergola / caillebotis','Ventilation salle','Confort thermique','Urgence','Autre'],
-  'Couture / Textile':['Confection rideaux','Réparation textile','Remplacement tissu','Stores / voilages','Autre'],
-  'Rideau / Double des clés':['Rideaux — installation','Rideaux — réparation','Double de clés','Serrure / verrou','Stores','Autre'],
-  'DTP':['Peinture intérieure','Peinture extérieure','Clôture / portail','Voirie / allée','Aménagement extérieur','Urgence DTP','Autre'],
-  'DSB':['Étanchéité / sur-toiture','Menuiserie','Ravalement façade','Réfection coursives','Sanitaire','Sol souple','Sol synthétique','Électricité','Accessibilité','Création salle de classe','Urgence bâtiment','Autre'],
-  'Élagage et abattage d\'arbres':['Élagage préventif','Abattage d\'arbre','Débroussaillage','Racines / dégâts','Urgence végétation','Autre'],
-  'ERP / Alarmes / Extincteurs':['Alarme incendie — panne','Alarme incendie — vérification','Extincteur — recharge','Extincteur — installation','Éclairage de sécurité','Désenfumage','Urgence ERP','Autre'],
-  'Dératisation et traitement 3D':['Rats / souris','Cafards / blattes','Guêpes / frelons / abeilles','Fourmis','Traitement préventif','Urgence nuisibles','Autre'],
+  'Restauration scolaire':['Demande concernant les appareils','Demande de maintenance','Demande de nettoyage','Demande de maintenance du bâti cantine','Diverse'],
+  'Informatique':['Demande de maintenance informatique','Problème de software','Demande de maintenance téléphonique','Souci de reprographie','Problème de connexion divers','Diverse'],
+  'Mobilier':['Demande de mobilier supplémentaire','Demande de remplacement de mobilier usagé','Demande d\'évacuation de mobilier','Demande diverse liée au mobilier','Diverse'],
+  'Ventilateur / Brasseur d\'air':['Panne de ventilateur','Panne de brasseur d\'air','Nouvelle demande d\'installation','Diverse'],
+  'Couture / Textile — Rideau / Double des clés':['Demande de double de clé','Demande de BIP','Demande de rideau','Diverse'],
+  'DTP':['Demande d\'intervention de maintenance','Demande de travaux divers','Demande d\'intervention sur l\'installation électrique','Demande de maintenance de l\'alarme anti-intrusion','Diverse'],
+  'DSB':['Demande d\'étanchéité','Demande de ravalement','Demande de réfection de sanitaire','Demande de réfection de sol souple','Demande de réfection de sol synthétique','Demande de création de salle de classe','Demande d\'aménagement','Diverse'],
+  'Élagage et abattage d\'arbres':['Demande de déplacement','Demande de plantation','Demande diverse par rapport à l\'aménagement paysager','Diverse'],
+  'ERP / Alarmes / Extincteurs':['Demande de maintenance de l\'alarme incendie','Demande de maintenance des extracteurs','Diverse'],
+  'Dératisation et traitement 3D':['Demande de dératisation','Demande de désinsectisation','Demande de dératisation et désinsectisation','Demande d\'intervention pour l\'entretien des pièges','Diverse'],
 };
 
 function majTypes(){
