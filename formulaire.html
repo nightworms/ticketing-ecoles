@@ -195,24 +195,9 @@
       <div class="section-body">
         <div class="field-row">
           <div class="field">
-            <label>Type de demande <span class="req">*</span></label>
+            <label>Type de demande <span class="req">*</span><span class="hint" id="typeHint">Sélectionnez d'abord une cellule</span></label>
             <select id="type_travaux" required>
-              <option value="">-- Sélectionner --</option>
-              <optgroup label="Confort thermique">
-                <option>Brasseur d'air</option><option>Pergola / caillebotis</option><option>Isolation préau</option>
-              </optgroup>
-              <optgroup label="Maintenance bâtiment">
-                <option>Étanchéité / sur-toiture</option><option>Menuiserie</option><option>Ravalement</option>
-                <option>Réfection des coursives</option><option>Sanitaire</option><option>Sol souple</option>
-                <option>Sol synthétique</option><option>Restauration scolaire</option>
-              </optgroup>
-              <optgroup label="Infrastructure & sécurité">
-                <option>Électricité / maintenance électrique</option><option>Accessibilité</option>
-                <option>Aménagement paysager</option><option>Création salle de classe</option>
-                <option>ERP / Alarme incendie / Extincteur</option><option>Dératisation</option>
-                <option>Mobilier scolaire</option><option>Informatique / Équipement numérique</option>
-                <option>Élagage / Abattage d'arbres</option><option>Urgence / divers</option>
-              </optgroup>
+              <option value="">-- Sélectionnez d'abord une cellule --</option>
             </select>
           </div>
           <div class="field">
@@ -224,6 +209,17 @@
               <option value="normale" selected>🟡 Normale — À planifier</option>
               <option value="basse">⚪ Basse — Amélioration</option>
             </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Date souhaitée d'intervention <span class="hint">Facultatif</span></label>
+            <input type="date" id="date_souhaitee" min="">
+          </div>
+          <div class="field" style="display:flex;align-items:flex-end;padding-bottom:2px;">
+            <div style="background:var(--bleu-pale);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--bleu);line-height:1.5;width:100%;">
+              💡 La date est indicative. Elle aide la cellule à planifier l'intervention.
+            </div>
           </div>
         </div>
         <div class="field">
@@ -285,7 +281,41 @@ const ECOLES={
   'SOURCE':['Elém. G. Macé','Mat. Source']
 };
 
-function filtrerEcoles(){
+const TYPES_PAR_CELLULE={
+  'Restauration scolaire':['Équipement cuisine','Mobilier cantine','Réfrigération / froid','Hygiène et nettoyage','Plonge / vaisselle','Urgence restauration','Autre'],
+  'Informatique':['Panne matériel (PC, tablette…)','Réseau / connexion internet','Logiciel / installation','Vidéoprojecteur / écran','Imprimante','Téléphonie','Urgence informatique','Autre'],
+  'Mobilier':['Réparation mobilier','Remplacement mobilier','Nouveau mobilier','Mobilier de cour','Urgence mobilier','Autre'],
+  'Ventilateur / Brasseur d\'air':['Brasseur d\'air — panne','Brasseur d\'air — installation','Pergola / caillebotis','Ventilation salle','Confort thermique','Urgence','Autre'],
+  'Couture / Textile':['Confection rideaux','Réparation textile','Remplacement tissu','Stores / voilages','Autre'],
+  'Rideau / Double des clés':['Rideaux — installation','Rideaux — réparation','Double de clés','Serrure / verrou','Stores','Autre'],
+  'DTP':['Peinture intérieure','Peinture extérieure','Clôture / portail','Voirie / allée','Aménagement extérieur','Urgence DTP','Autre'],
+  'DSB':['Étanchéité / sur-toiture','Menuiserie','Ravalement façade','Réfection coursives','Sanitaire','Sol souple','Sol synthétique','Électricité','Accessibilité','Création salle de classe','Urgence bâtiment','Autre'],
+  'Élagage et abattage d\'arbres':['Élagage préventif','Abattage d\'arbre','Débroussaillage','Racines / dégâts','Urgence végétation','Autre'],
+  'ERP / Alarmes / Extincteurs':['Alarme incendie — panne','Alarme incendie — vérification','Extincteur — recharge','Extincteur — installation','Éclairage de sécurité','Désenfumage','Urgence ERP','Autre'],
+  'Dératisation et traitement 3D':['Rats / souris','Cafards / blattes','Guêpes / frelons / abeilles','Fourmis','Traitement préventif','Urgence nuisibles','Autre'],
+};
+
+function majTypes(){
+  const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
+  const sel=document.getElementById('type_travaux');
+  const hint=document.getElementById('typeHint');
+  sel.innerHTML='';
+  if(!cellule){
+    sel.innerHTML='<option value="">-- Sélectionnez d\'abord une cellule --</option>';
+    hint.textContent='Sélectionnez d\'abord une cellule';
+    return;
+  }
+  const types=TYPES_PAR_CELLULE[cellule]||[];
+  sel.innerHTML='<option value="">-- Sélectionner le type --</option>';
+  types.forEach(t=>{const o=document.createElement('option');o.value=o.textContent=t;sel.appendChild(o);});
+  hint.textContent=types.length+' types disponibles pour cette cellule';
+  majProgression();
+}
+
+// Date min = aujourd'hui
+document.getElementById('date_souhaitee').min=new Date().toISOString().split('T')[0];
+
+
   const s=document.getElementById('secteur').value;
   const el=document.getElementById('ecole');
   el.innerHTML='<option value="">-- Sélectionner une école --</option>';
@@ -303,7 +333,7 @@ function majProgression(){
     document.getElementById('pl'+(i+1)).classList.toggle('active',[s1,s2,s3,s4][i]);
   });
 }
-document.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('change',majProgression));
+document.querySelectorAll('input[name=cellule]').forEach(el=>el.addEventListener('change',()=>{majTypes();majProgression();}));
 document.querySelectorAll('input[type=text],input[type=email],input[type=tel],textarea').forEach(el=>el.addEventListener('input',majProgression));
 
 function previewPhotos(input){
@@ -355,6 +385,7 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
     cellule:cellule,
     type_travaux:document.getElementById('type_travaux').value,
     priorite:document.getElementById('priorite').value,
+    date_souhaitee:document.getElementById('date_souhaitee').value||null,
     description:document.getElementById('description').value,
     commentaires:document.getElementById('commentaires').value||null,
     photos:photosData,
