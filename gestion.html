@@ -402,6 +402,50 @@
         <div id="mHistorique"></div>
       </div>
       <div class="modal-actions">
+        <!-- Réaffectation -->
+        <div style="grid-column:1/-1;background:var(--bleu-pale);border-radius:10px;padding:12px 16px;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:600;color:var(--bleu);margin-bottom:10px;">🔄 Réaffectation du ticket</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label>Cellule</label>
+              <select id="mCelluleEdit">
+                <option value="">— Inchangée —</option>
+                <option>Restauration scolaire</option>
+                <option>Informatique</option>
+                <option>Mobilier</option>
+                <option>Ventilateur / Brasseur d'air</option>
+                <option>Couture / Textile — Rideau / Double des clés</option>
+                <option>DTP</option>
+                <option>DSB</option>
+                <option>Élagage et abattage d'arbres</option>
+                <option>ERP / Alarmes / Extincteurs</option>
+                <option>Dératisation et traitement 3D</option>
+              </select>
+            </div>
+            <div>
+              <label>École</label>
+              <input type="text" id="mEcoleEdit" placeholder="Nom de l'école…">
+            </div>
+            <div>
+              <label>Secteur</label>
+              <select id="mSecteurEdit">
+                <option value="">— Inchangé —</option>
+                <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
+                <option>BRETAGNE</option><option>BRÛLÉ</option>
+                <option>CENTRE VILLE</option><option>CAMÉLIAS</option>
+                <option>CHAUDRON</option><option>DOMENJOD</option>
+                <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
+                <option>MONTGAILLARD</option><option>MOUFIA</option>
+                <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇOIS</option>
+                <option>SAINTE CLOTILDE</option><option>SOURCE</option>
+              </select>
+            </div>
+            <div>
+              <label>Type de demande</label>
+              <input type="text" id="mTypeTravaux" placeholder="Type de travaux…">
+            </div>
+          </div>
+        </div>
         <div><label>Statut</label>
           <select id="mStatut">
 <option value="nouveau">🔵 Nouveau</option>
@@ -758,6 +802,11 @@ function ouvrirModal(id){
   document.getElementById('mAssignee').value=t.assignee||'';
   document.getElementById('mDateIntervention').value='';
   document.getElementById('mNotes').value='';
+  // Pré-remplir les champs de réaffectation avec les valeurs actuelles
+  document.getElementById('mCelluleEdit').value=t.cellule||'';
+  document.getElementById('mEcoleEdit').value=t.ecole||'';
+  document.getElementById('mSecteurEdit').value=t.secteur||'';
+  document.getElementById('mTypeTravaux').value=t.type_travaux||'';
   document.getElementById('saveFeedback').style.display='none';
   document.getElementById('btnSave').disabled=false;
   document.getElementById('btnSave').textContent='Enregistrer les modifications';
@@ -773,6 +822,24 @@ async function sauvegarderTicket(){
   const fb=document.getElementById('saveFeedback');
   btn.disabled=true;btn.textContent='Enregistrement…';fb.style.display='none';
   const payload={statut:document.getElementById('mStatut').value,priorite:document.getElementById('mPrioriteEdit').value,assignee:document.getElementById('mAssignee').value||null,updated_at:new Date().toISOString(),updated_by:currentUser?.id||'admin'};
+  // Réaffectation — inclure seulement les champs modifiés
+  const newCellule=document.getElementById('mCelluleEdit').value;
+  const newEcole=document.getElementById('mEcoleEdit').value.trim();
+  const newSecteur=document.getElementById('mSecteurEdit').value;
+  const newType=document.getElementById('mTypeTravaux').value.trim();
+  const t0=allTickets.find(x=>x.id===currentTicketId);
+  if(newCellule && newCellule!==t0?.cellule) payload.cellule=newCellule;
+  if(newEcole && newEcole!==t0?.ecole) payload.ecole=newEcole;
+  if(newSecteur && newSecteur!==t0?.secteur) payload.secteur=newSecteur;
+  if(newType!==undefined && newType!==t0?.type_travaux) payload.type_travaux=newType||null;
+  // Note automatique si réaffectation
+  const changementsLog=[];
+  if(payload.cellule) changementsLog.push(`Cellule → ${payload.cellule}`);
+  if(payload.ecole) changementsLog.push(`École → ${payload.ecole}`);
+  if(payload.secteur) changementsLog.push(`Secteur → ${payload.secteur}`);
+  if(changementsLog.length>0 && !document.getElementById('mNotes').value.trim()){
+    document.getElementById('mNotes').value=`Réaffectation : ${changementsLog.join(', ')}`;
+  }
   let noteText=document.getElementById('mNotes').value.trim();
   const di=document.getElementById('mDateIntervention').value;
   if(di) noteText=(noteText?noteText+' — ':'')+`Intervention prévue le ${new Date(di).toLocaleDateString('fr-FR')}`;
@@ -951,6 +1018,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.4 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.5 — 17/03/2026</div>
 </body>
 </html>
