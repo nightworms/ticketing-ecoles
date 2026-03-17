@@ -61,8 +61,18 @@
   .prog-label{flex:1;text-align:center;font-size:11px;color:var(--gris);font-weight:500;}
   .prog-label.active{color:var(--bleu);}
 
-  /* Submit */
-  .btn-submit{width:100%;padding:16px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;}
+  /* === Écran de connexion === */
+  #ecran-connexion{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F8FAFC;padding:20px;}
+  .login-card{background:white;border:1px solid var(--border);border-radius:20px;padding:40px 36px;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(27,63,110,0.08);}
+  .login-logo{width:56px;height:56px;background:var(--bleu);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px;}
+  .login-card h1{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--texte);text-align:center;margin-bottom:6px;}
+  .login-card p{font-size:13px;color:var(--gris);text-align:center;margin-bottom:28px;line-height:1.6;}
+  .login-btn{width:100%;padding:13px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;}
+  .login-btn:hover{background:var(--bleu-clair);}
+  .login-error{display:none;background:var(--rouge-pale);border:1px solid #F5B7B1;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rouge);margin-top:14px;line-height:1.5;}
+  /* Masquer le formulaire par défaut */
+  #app-formulaire{display:none;}
+width:100%;padding:16px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;}
   .btn-submit:hover{background:var(--bleu-clair);}
   .btn-submit:disabled{background:var(--gris);cursor:not-allowed;}
   .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
@@ -77,6 +87,27 @@
 </style>
 </head>
 <body>
+
+<!-- ===== ÉCRAN DE CONNEXION ===== -->
+<div id="ecran-connexion">
+  <div class="login-card">
+    <div class="login-logo">🏫</div>
+    <h1>Signalement maintenance</h1>
+    <p>Saisissez votre adresse email pour accéder au formulaire de signalement.</p>
+    <div class="field">
+      <label>Adresse email <span class="req">*</span></label>
+      <input type="email" id="login-email" placeholder="ce.XXXXXXX@ac-reunion.fr" style="font-size:14px;" onkeydown="if(event.key==='Enter') connexion()">
+    </div>
+    <button class="login-btn" onclick="connexion()">Accéder au formulaire →</button>
+    <div class="login-error" id="login-error"></div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--gris);text-align:center;">
+      Accès réservé aux directeurs d'école et agents<br>de la Direction de l'Éducation de Saint-Denis
+    </div>
+  </div>
+</div>
+
+<!-- ===== FORMULAIRE (masqué jusqu'à connexion) ===== -->
+<div id="app-formulaire">
 <header>
   <div class="header-logo">🏫</div>
   <div>
@@ -110,16 +141,13 @@
       <div class="section-header"><div class="section-num">1</div><h2>Votre identification</h2></div>
       <div class="section-body">
         <div class="field">
-          <label>Adresse email <span class="req">*</span><span class="hint">Email de l'école ou de la Direction de l'Éducation</span></label>
-          <div style="position:relative;">
-            <input type="email" id="dem_email" placeholder="ce.XXXXXXX@ac-reunion.fr ou prenom.nom@mairie-saintdenis.fr" required oninput="verifierEmail(this.value)">
-            <div id="email-status" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;"></div>
-          </div>
-          <div id="email-msg" style="display:none;margin-top:6px;padding:8px 12px;border-radius:8px;font-size:13px;"></div>
+          <label>Adresse email <span class="hint">Identifiant de connexion</span></label>
+          <input type="email" id="dem_email" placeholder="ce.XXXXXXX@ac-reunion.fr" required readonly style="background:var(--gris-pale);color:var(--gris);">
         </div>
         <div id="suite-identification" style="display:none;">
-          <div id="badge-ecole" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#2D6B57;">
-            <strong>🏫 École identifiée :</strong> <span id="badge-nom-ecole"></span>
+          <div id="badge-ecole" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#2D6B57;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div><strong>🏫 École identifiée :</strong> <span id="badge-nom-ecole"></span></div>
+            <button type="button" onclick="seDeconnecter()" style="background:none;border:1px solid #9FD8CA;border-radius:6px;padding:4px 10px;font-size:12px;color:#2D6B57;cursor:pointer;white-space:nowrap;font-family:inherit;" title="Changer d'identifiant">🔄 Changer</button>
           </div>
           <div class="field-row">
             <div class="field">
@@ -284,6 +312,7 @@
   </div>
   <div id="error-msg"><p id="errorText"></p></div>
 </main>
+</div><!-- fin #app-formulaire -->
 
 <script>
 const SUPABASE_URL='https://clakdvjcytmtubenprux.supabase.co';
@@ -408,88 +437,10 @@ const TYPES_PAR_CELLULE={
   'Dératisation et traitement 3D':['Demande de dératisation','Demande de désinsectisation','Demande de dératisation et désinsectisation','Demande d\'intervention pour l\'entretien des pièges','Diverse'],
 };
 
-// Domaines autorisés
-const DOMAINES_ECOLE = '@ac-reunion.fr';
-const DOMAINES_DE = ['@mairie-saintdenis.fr', '@ville-saintdenis.fr', '@st-denis.re'];
-
-// Variable globale : données de l'école identifiée
-let _ecoleIdentifiee = null; // {secteur, nom, adresse, tel, mail} ou null
+// Variables globales
+let _ecoleIdentifiee = null;
 let _modeLibre = false;
 
-function verifierEmail(email){
-  const statusEl = document.getElementById('email-status');
-  const msgEl = document.getElementById('email-msg');
-  const suiteEl = document.getElementById('suite-identification');
-  const badgeEl = document.getElementById('badge-ecole');
-
-  if(!email || !email.includes('@')){
-    statusEl.textContent = '';
-    msgEl.style.display = 'none';
-    suiteEl.style.display = 'none';
-    return;
-  }
-
-  // Chercher dans ECOLES_DATA si l'email correspond à une école
-  let ecoleFound = null;
-  for(const [secteur, ecoles] of Object.entries(ECOLES_DATA)){
-    for(const e of ecoles){
-      if(e.mail && e.mail.toLowerCase() === email.toLowerCase()){
-        ecoleFound = {...e, secteur};
-        break;
-      }
-    }
-    if(ecoleFound) break;
-  }
-
-  if(ecoleFound){
-    // Mode verrouillé : email d'école reconnu
-    _ecoleIdentifiee = ecoleFound;
-    _modeLibre = false;
-    statusEl.textContent = '✅';
-    msgEl.style.display = 'none';
-    // Remplir la section 2 verrouillée
-    document.getElementById('verr-nom').textContent = ecoleFound.label;
-    document.getElementById('verr-adresse').textContent = ecoleFound.adresse || '—';
-    document.getElementById('verr-tel').textContent = ecoleFound.tel || '—';
-    document.getElementById('verr-mail').textContent = ecoleFound.mail;
-    document.getElementById('secteur').value = ecoleFound.secteur;
-    document.getElementById('ecole').value = ecoleFound.nom;
-    document.getElementById('ecole-verrouillee').style.display = 'block';
-    document.getElementById('ecole-libre').style.display = 'none';
-    // Badge dans section 1
-    document.getElementById('badge-nom-ecole').textContent = ecoleFound.label + ' — ' + ecoleFound.secteur;
-    badgeEl.style.display = 'block';
-    suiteEl.style.display = 'block';
-    majProgression();
-  } else {
-    // Vérifier si c'est un email DE (agent direction)
-    const isDE = DOMAINES_DE.some(d => email.toLowerCase().endsWith(d));
-    if(isDE){
-      // Mode libre
-      _ecoleIdentifiee = null;
-      _modeLibre = true;
-      statusEl.textContent = '✅';
-      msgEl.style.display = 'none';
-      badgeEl.style.display = 'none';
-      document.getElementById('ecole-verrouillee').style.display = 'none';
-      document.getElementById('ecole-libre').style.display = 'block';
-      suiteEl.style.display = 'block';
-      majProgression();
-    } else if(email.includes('@') && email.includes('.')){
-      // Email complet mais non reconnu → erreur
-      _ecoleIdentifiee = null;
-      _modeLibre = false;
-      statusEl.textContent = '❌';
-      msgEl.style.display = 'block';
-      msgEl.style.background = 'var(--rouge-pale)';
-      msgEl.style.color = 'var(--rouge)';
-      msgEl.style.border = '1px solid #F5B7B1';
-      msgEl.textContent = '⛔ Adresse email non reconnue. Utilisez l\'email de votre école (ce.XXXXXXX@ac-reunion.fr) ou votre email de la Direction de l\'Éducation.';
-      badgeEl.style.display = 'none';
-      suiteEl.style.display = 'none';
-    }
-  }
-}
 
 function majTypes(){
   const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
@@ -640,6 +591,17 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
   }
 });
 
+function seDeconnecter(){
+  // Revenir à l'écran de connexion
+  document.getElementById('app-formulaire').style.display='none';
+  document.getElementById('ecran-connexion').style.display='flex';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('login-email').focus();
+  // Réinitialiser l'état
+  _ecoleIdentifiee=null; _modeLibre=false;
+}
+
 function resetForm(){
   document.getElementById('mainForm').reset();
   document.getElementById('mainForm').style.display='block';
@@ -659,7 +621,74 @@ function resetForm(){
   document.getElementById('secteur').value='';
   document.getElementById('ecole').value='';
 }
+
+// ===== LOGIQUE DE CONNEXION =====
+function connexion(){
+  const email = document.getElementById('login-email').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if(!email || !email.includes('@')){
+    errEl.style.display = 'block';
+    errEl.textContent = 'Veuillez saisir une adresse email valide.';
+    return;
+  }
+
+  // Chercher dans ECOLES_DATA
+  let ecoleFound = null;
+  for(const [secteur, ecoles] of Object.entries(ECOLES_DATA)){
+    for(const e of ecoles){
+      if(e.mail && e.mail.toLowerCase() === email.toLowerCase()){
+        ecoleFound = {...e, secteur};
+        break;
+      }
+    }
+    if(ecoleFound) break;
+  }
+
+  const DOMAINES_DE = ['@mairie-saintdenis.fr', '@ville-saintdenis.fr', '@st-denis.re'];
+
+  if(ecoleFound){
+    _ecoleIdentifiee = ecoleFound;
+    _modeLibre = false;
+    ouvrirFormulaire(email, ecoleFound);
+  } else if(DOMAINES_DE.some(d => email.toLowerCase().endsWith(d))){
+    _ecoleIdentifiee = null;
+    _modeLibre = true;
+    ouvrirFormulaire(email, null);
+  } else {
+    errEl.style.display = 'block';
+    errEl.innerHTML = '⛔ Adresse email non reconnue.<br>Utilisez l\'email de votre école <strong>(ce.XXXXXXX@ac-reunion.fr)</strong> ou votre email de la Direction de l\'Éducation.';
+  }
+}
+
+function ouvrirFormulaire(email, ecole){
+  document.getElementById('ecran-connexion').style.display = 'none';
+  document.getElementById('app-formulaire').style.display = 'block';
+  document.getElementById('dem_email').value = email;
+
+  if(ecole){
+    _ecoleIdentifiee = ecole;
+    document.getElementById('badge-nom-ecole').textContent = ecole.label + ' — ' + ecole.secteur;
+    document.getElementById('badge-ecole').style.display = 'flex';
+    document.getElementById('suite-identification').style.display = 'block';
+    document.getElementById('verr-nom').textContent = ecole.label;
+    document.getElementById('verr-adresse').textContent = ecole.adresse || '—';
+    document.getElementById('verr-tel').textContent = ecole.tel || '—';
+    document.getElementById('verr-mail').textContent = ecole.mail;
+    document.getElementById('secteur').value = ecole.secteur;
+    document.getElementById('ecole').value = ecole.nom;
+    document.getElementById('ecole-verrouillee').style.display = 'block';
+    document.getElementById('ecole-libre').style.display = 'none';
+  } else {
+    document.getElementById('suite-identification').style.display = 'block';
+    document.getElementById('badge-ecole').style.display = 'none';
+    document.getElementById('ecole-verrouillee').style.display = 'none';
+    document.getElementById('ecole-libre').style.display = 'block';
+  }
+  majProgression();
+}
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.6 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.8 — 17/03/2026</div>
 </body>
 </html>
