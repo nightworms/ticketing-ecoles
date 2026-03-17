@@ -3,151 +3,693 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clôture ticket — Maintenance scolaire</title>
+<title>Signalement maintenance — Écoles Saint-Denis</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+  :root{--bleu:#1B3F6E;--bleu-clair:#2E5FA3;--bleu-pale:#EBF0F8;--vert:#1A7A5E;--vert-pale:#E6F4F0;--rouge:#C0392B;--rouge-pale:#FDECEA;--orange:#D4700A;--orange-pale:#FEF3E7;--jaune:#B7860A;--jaune-pale:#FEFBE7;--gris:#64748B;--gris-pale:#F1F5F9;--border:#CBD5E1;--texte:#1E293B;--texte-doux:#475569;}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:#F8FAFC;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .card{background:white;border-radius:20px;padding:40px 36px;max-width:440px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(27,63,110,0.10);border:1px solid #CBD5E1;}
-  .icon{font-size:52px;margin-bottom:20px;}
-  h1{font-size:20px;font-weight:600;color:#1E293B;margin-bottom:10px;}
-  p{font-size:14px;color:#64748B;line-height:1.6;margin-bottom:20px;}
-  .ticket-info{background:#EBF0F8;border-radius:10px;padding:14px 16px;margin-bottom:24px;text-align:left;font-size:13px;color:#1E293B;line-height:1.9;}
-  .ticket-info strong{color:#1B3F6E;}
-  .btn{width:100%;padding:14px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;}
-  .btn-confirmer{background:#1A7A5E;color:white;margin-bottom:10px;}
-  .btn-confirmer:hover{background:#15614A;}
-  .btn-annuler{background:#F1F5F9;color:#64748B;}
-  .btn-annuler:hover{background:#E2E8F0;}
-  .success{display:none;background:#D1FAE5;border:1px solid #9FD8CA;border-radius:12px;padding:20px;margin-top:16px;}
-  .success h2{color:#166534;font-size:17px;margin-bottom:6px;}
-  .success p{color:#2D6B57;font-size:13px;margin:0;}
-  .error-msg{display:none;background:#FEE2E2;border:1px solid #F5B7B1;border-radius:12px;padding:14px;margin-top:16px;color:#C0392B;font-size:13px;}
-  .spinner{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+  body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:var(--texte);min-height:100vh;}
+  header{background:var(--bleu);padding:20px 24px;display:flex;align-items:center;gap:16px;}
+  .header-logo{width:44px;height:44px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  header h1{font-family:'DM Serif Display',serif;font-size:18px;color:white;font-weight:400;line-height:1.3;}
+  header p{font-size:13px;color:rgba(255,255,255,0.65);margin-top:2px;}
+  main{max-width:680px;margin:0 auto;padding:32px 20px 60px;}
+  .urgence-banner{background:var(--rouge-pale);border:1px solid #F5B7B1;border-radius:10px;padding:14px 16px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start;}
+  .urgence-banner .icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+  .urgence-banner p{font-size:13px;color:var(--rouge);line-height:1.5;}
+  .urgence-banner strong{display:block;margin-bottom:2px;}
+  .section-card{background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+  .section-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--gris-pale);}
+  .section-num{width:26px;height:26px;background:var(--bleu);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+  .section-header h2{font-size:15px;font-weight:600;color:var(--texte);}
+  .section-body{padding:20px;}
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  label{display:block;font-size:13px;font-weight:500;color:var(--texte);margin-bottom:6px;}
+  label .req{color:var(--rouge);margin-left:2px;}
+  label .hint{font-weight:400;color:var(--gris);margin-left:6px;font-size:12px;}
+  input,select,textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--texte);background:white;transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--bleu-clair);box-shadow:0 0 0 3px rgba(46,95,163,0.12);}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+  textarea{resize:vertical;min-height:90px;line-height:1.6;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+  /* Cellule selector */
+  .cellule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .cellule-option input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+  .cellule-option{position:relative;}
+  .cellule-label{display:flex;align-items:center;gap:10px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;}
+  .cellule-label .cell-icon{font-size:18px;flex-shrink:0;}
+  .cellule-option input:checked + .cellule-label{border-color:var(--bleu-clair);background:var(--bleu-pale);color:var(--bleu);}
+  .cellule-label:hover{border-color:var(--bleu-clair);background:var(--bleu-pale);}
+
+  /* Upload */
+  .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative;}
+  .upload-zone:hover{border-color:var(--bleu-clair);background:var(--bleu-pale);}
+  .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .upload-zone .uz-icon{font-size:28px;margin-bottom:8px;}
+  .upload-zone .uz-text{font-size:13px;color:var(--gris);}
+  .upload-zone .uz-text strong{color:var(--bleu-clair);}
+  .upload-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .preview-img{width:72px;height:72px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
+
+  /* Barre de progression */
+  .progress-bar{display:flex;gap:0;margin-bottom:12px;}
+  .prog-step{flex:1;height:4px;background:var(--border);border-radius:2px;transition:background .3s;}
+  .prog-step.done{background:var(--bleu);}
+  .prog-labels{display:flex;margin-bottom:24px;}
+  .prog-label{flex:1;text-align:center;font-size:11px;color:var(--gris);font-weight:500;}
+  .prog-label.active{color:var(--bleu);}
+
+  /* === Écran de connexion === */
+  #ecran-connexion{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F8FAFC;padding:20px;}
+  .login-card{background:white;border:1px solid var(--border);border-radius:20px;padding:40px 36px;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(27,63,110,0.08);}
+  .login-logo{width:56px;height:56px;background:var(--bleu);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px;}
+  .login-card h1{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--texte);text-align:center;margin-bottom:6px;}
+  .login-card p{font-size:13px;color:var(--gris);text-align:center;margin-bottom:28px;line-height:1.6;}
+  .login-btn{width:100%;padding:13px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;}
+  .login-btn:hover{background:var(--bleu-clair);}
+  .login-error{display:none;background:var(--rouge-pale);border:1px solid #F5B7B1;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rouge);margin-top:14px;line-height:1.5;}
+  /* Masquer le formulaire par défaut */
+  #app-formulaire{display:none;}
+width:100%;padding:16px;background:var(--bleu);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;}
+  .btn-submit:hover{background:var(--bleu-clair);}
+  .btn-submit:disabled{background:var(--gris);cursor:not-allowed;}
+  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
   @keyframes spin{to{transform:rotate(360deg);}}
+  #success-msg{display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:24px;margin-top:20px;text-align:center;}
+  #success-msg h3{color:var(--vert);font-size:18px;margin-bottom:8px;}
+  #success-msg p{color:#2D6B57;font-size:14px;line-height:1.6;}
+  #success-msg .ref{font-family:monospace;font-size:13px;background:white;padding:6px 14px;border-radius:6px;display:inline-block;margin-top:10px;color:var(--gris);}
+  #error-msg{display:none;background:var(--rouge-pale);border:1px solid #F5B7B1;border-radius:10px;padding:14px;margin-top:16px;}
+  #error-msg p{color:var(--rouge);font-size:14px;}
+  @media(max-width:480px){.field-row{grid-template-columns:1fr;}.cellule-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-<div class="card" id="mainCard">
-  <div class="icon" id="mainIcon">🏫</div>
-  <h1 id="mainTitle">Clôture de ticket</h1>
-  <p id="mainDesc">Chargement des informations du ticket…</p>
-  <div class="ticket-info" id="ticketInfo" style="display:none"></div>
-  <div id="actions" style="display:none">
-    <button class="btn btn-confirmer" id="btnConfirmer" onclick="cloturerTicket()">
-      <div class="spinner" id="spinner"></div>
-      <span id="btnText">✅ Confirmer la clôture</span>
-    </button>
-    <button class="btn btn-annuler" onclick="window.close()">Annuler</button>
+
+<!-- ===== ÉCRAN DE CONNEXION ===== -->
+<div id="ecran-connexion">
+  <div class="login-card">
+    <div class="login-logo">🏫</div>
+    <h1>Signalement maintenance</h1>
+    <p>Saisissez votre adresse email pour accéder au formulaire de signalement.</p>
+    <div class="field">
+      <label>Adresse email <span class="req">*</span></label>
+      <input type="email" id="login-email" placeholder="ce.XXXXXXX@ac-reunion.fr" style="font-size:14px;" onkeydown="if(event.key==='Enter') connexion()">
+    </div>
+    <button class="login-btn" onclick="connexion()">Accéder au formulaire →</button>
+    <div class="login-error" id="login-error"></div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--gris);text-align:center;">
+      Accès réservé aux directeurs d'école et agents<br>de la Direction de l'Éducation de Saint-Denis
+    </div>
   </div>
-  <div class="success" id="successMsg">
-    <h2>✅ Ticket clôturé !</h2>
-    <p>Le ticket a bien été marqué comme résolu.<br>Merci pour votre intervention.</p>
-  </div>
-  <div class="error-msg" id="errorMsg"></div>
 </div>
+
+<!-- ===== FORMULAIRE (masqué jusqu'à connexion) ===== -->
+<div id="app-formulaire">
+<header>
+  <div class="header-logo">🏫</div>
+  <div>
+    <h1>Signalement maintenance scolaire</h1>
+    <p>Direction de l'Éducation — Pôle Technique — Ville de Saint-Denis</p>
+  </div>
+</header>
+<main>
+  <div class="urgence-banner">
+    <div class="icon">⚠️</div>
+    <p><strong>Urgence absolue ?</strong> Pour tout danger immédiat (électrique, structure…), contactez directement la DSB au <strong>0692 05 32 82</strong> avant de remplir ce formulaire.</p>
+  </div>
+
+  <div class="progress-bar" id="progressBar">
+    <div class="prog-step" id="ps1"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps2"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps3"></div><div style="width:5px"></div>
+    <div class="prog-step" id="ps4"></div>
+  </div>
+  <div class="prog-labels">
+    <div class="prog-label" id="pl1">Identification</div>
+    <div class="prog-label" id="pl2">École</div>
+    <div class="prog-label" id="pl3">Cellule</div>
+    <div class="prog-label" id="pl4">Travaux</div>
+  </div>
+
+  <form id="mainForm">
+
+    <!-- Section 1 : Identification -->
+    <div class="section-card">
+      <div class="section-header"><div class="section-num">1</div><h2>Votre identification</h2></div>
+      <div class="section-body">
+        <div class="field">
+          <label>Adresse email <span class="hint">Identifiant de connexion</span></label>
+          <input type="email" id="dem_email" placeholder="ce.XXXXXXX@ac-reunion.fr" required readonly style="background:var(--gris-pale);color:var(--gris);">
+        </div>
+        <div id="suite-identification" style="display:none;">
+          <div id="badge-ecole" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#2D6B57;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div><strong>🏫 École identifiée :</strong> <span id="badge-nom-ecole"></span></div>
+            <button type="button" onclick="seDeconnecter()" style="background:none;border:1px solid #9FD8CA;border-radius:6px;padding:4px 10px;font-size:12px;color:#2D6B57;cursor:pointer;white-space:nowrap;font-family:inherit;" title="Changer d'identifiant">🔄 Changer</button>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nom complet <span class="req">*</span></label>
+              <input type="text" id="dem_nom" placeholder="Ex : Marie Dupont" required>
+            </div>
+            <div class="field">
+              <label>Fonction <span class="req">*</span></label>
+              <select id="dem_role" required>
+                <option value="">-- Sélectionner --</option>
+                <option>Directeur(trice) d'école</option>
+                <option>Agent Direction Éducation</option>
+                <option>Agent DSB</option>
+                <option>Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Téléphone <span class="hint">Facultatif</span></label>
+            <input type="tel" id="dem_tel" placeholder="0692 XX XX XX">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 : École -->
+    <div class="section-card">
+      <div class="section-header"><div class="section-num">2</div><h2>École concernée</h2></div>
+      <div class="section-body">
+        <!-- Mode verrouillé : école identifiée par email -->
+        <div id="ecole-verrouillee" style="display:none;background:var(--vert-pale);border:1px solid #9FD8CA;border-radius:10px;padding:14px 16px;font-size:13px;color:var(--texte);line-height:1.9;margin-bottom:14px;">
+          <div style="font-weight:600;color:var(--vert);margin-bottom:8px;">🔒 École identifiée automatiquement</div>
+          <div>🏫 <strong id="verr-nom"></strong></div>
+          <div>🗺️ <span id="verr-adresse"></span></div>
+          <div>📞 <span id="verr-tel"></span></div>
+          <div>✉️ <span id="verr-mail"></span></div>
+          <input type="hidden" id="secteur" value="">
+          <input type="hidden" id="ecole" value="">
+        </div>
+        <!-- Mode libre : choix manuel (agent DE) -->
+        <div id="ecole-libre">
+          <div class="field-row">
+            <div class="field">
+              <label>Secteur <span class="req">*</span></label>
+              <select id="secteur-select" onchange="majEcoles()">
+                <option value="">-- Sélectionner --</option>
+                <option>BELLEPIERRE</option><option>BOIS DE NÈFLES</option>
+                <option>BRETAGNE</option><option>BRÛLÉ</option>
+                <option>CENTRE VILLE</option><option>CAMÉLIAS</option>
+                <option>CHAUDRON</option><option>DOMENJOD</option>
+                <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
+                <option>MONTGAILLARD</option><option>MOUFIA</option>
+                <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇAIS</option>
+                <option>SAINTE CLOTILDE</option><option>SOURCE</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>École <span class="req">*</span></label>
+              <select id="ecole-select" onchange="majFicheEcole()">
+                <option value="">-- Choisir le secteur d'abord --</option>
+              </select>
+            </div>
+          </div>
+          <div id="fiche-ecole" style="display:none;background:var(--bleu-pale);border:1px solid #CBD5E1;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--texte);line-height:1.8;margin-top:10px;">
+            <div style="font-weight:600;color:var(--bleu);margin-bottom:6px;">📍 Coordonnées de l'école</div>
+            <div>🏠 <span id="fiche-adresse"></span></div>
+            <div>📞 <span id="fiche-tel"></span></div>
+            <div>✉️ <span id="fiche-mail"></span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label>Localisation précise <span class="hint">Facultatif</span></label>
+          <input type="text" id="localisation" placeholder="Ex : Salle B3, toiture aile Est, cantine…">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3 : Cellule -->
+    <div class="section-card">
+      <div class="section-header"><div class="section-num">3</div><h2>Cellule concernée <span style="color:var(--rouge);font-size:13px">*</span></h2></div>
+      <div class="section-body">
+        <div class="cellule-grid" id="celluleGrid">
+          <div class="cellule-option"><input type="radio" name="cellule" id="c1" value="Restauration scolaire" required><label class="cellule-label" for="c1"><span class="cell-icon">🍽️</span>Restauration scolaire</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c2" value="Informatique"><label class="cellule-label" for="c2"><span class="cell-icon">💻</span>Informatique</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c3" value="Mobilier"><label class="cellule-label" for="c3"><span class="cell-icon">🪑</span>Mobilier</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c4" value="Ventilateur / Brasseur d'air"><label class="cellule-label" for="c4"><span class="cell-icon">🌀</span>Ventilateur / Brasseur d'air</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c5" value="Couture / Textile — Rideau / Double des clés"><label class="cellule-label" for="c5"><span class="cell-icon">🧵🔑</span>Couture / Textile — Rideau / Clés</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c7" value="DTP"><label class="cellule-label" for="c7"><span class="cell-icon">🏗️</span>DTP</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c8" value="DSB"><label class="cellule-label" for="c8"><span class="cell-icon">🔧</span>DSB</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c9" value="Élagage et abattage d'arbres"><label class="cellule-label" for="c9"><span class="cell-icon">🌳</span>Élagage / Abattage d'arbres</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c10" value="ERP / Alarmes / Extincteurs"><label class="cellule-label" for="c10"><span class="cell-icon">🚨</span>ERP / Alarmes / Extincteurs</label></div>
+          <div class="cellule-option"><input type="radio" name="cellule" id="c11" value="Dératisation et traitement 3D"><label class="cellule-label" for="c11"><span class="cell-icon">🐀</span>Dératisation / Traitement 3D</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 : Travaux -->
+    <div class="section-card">
+      <div class="section-header"><div class="section-num">4</div><h2>Nature de la demande</h2></div>
+      <div class="section-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Type de demande <span class="req">*</span><span class="hint" id="typeHint">Sélectionnez d'abord une cellule</span></label>
+            <select id="type_travaux" required>
+              <option value="">-- Sélectionnez d'abord une cellule --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Priorité <span class="req">*</span></label>
+            <select id="priorite" required>
+              <option value="">-- Sélectionner --</option>
+              <option value="urgente">🔴 Urgente — Danger / sécurité</option>
+              <option value="haute">🟠 Haute — Impact important</option>
+              <option value="normale" selected>🟡 Normale — À planifier</option>
+              <option value="basse">⚪ Basse — Amélioration</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Date souhaitée d'intervention <span class="hint">Facultatif</span></label>
+            <input type="date" id="date_souhaitee" min="">
+          </div>
+          <div class="field" style="display:flex;align-items:flex-end;padding-bottom:2px;">
+            <div style="background:var(--bleu-pale);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--bleu);line-height:1.5;width:100%;">
+              💡 La date est indicative. Elle aide la cellule à planifier l'intervention.
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Description détaillée <span class="req">*</span></label>
+          <textarea id="description" rows="4" placeholder="Décrivez précisément : localisation, symptômes, date d'apparition, risques identifiés…" required></textarea>
+        </div>
+        <div class="field">
+          <label>Observations complémentaires <span class="hint">Facultatif</span></label>
+          <textarea id="commentaires" rows="3" placeholder="Tentatives de réparation, contexte particulier (événement prévu, classe fermée…)"></textarea>
+        </div>
+        <div class="field">
+          <label>Photos <span class="hint">Facultatif — jusqu'à 3 photos (max 5 Mo chacune)</span></label>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="photoInput" accept="image/*" multiple onchange="previewPhotos(this)">
+            <div class="uz-icon">📷</div>
+            <div class="uz-text"><strong>Cliquez pour ajouter des photos</strong><br>ou glissez-déposez ici</div>
+          </div>
+          <div class="upload-preview" id="uploadPreview"></div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">Envoyer le signalement</span>
+    </button>
+  </form>
+
+  <div id="success-msg">
+    <h3>✅ Signalement envoyé avec succès</h3>
+    <p>Votre demande a bien été transmise à la cellule concernée.<br>Un email de confirmation vous a été envoyé à <strong id="confirmEmail"></strong>.</p>
+    <div class="ref" id="ticketRef"></div>
+    <br><br>
+    <button onclick="resetForm()" style="background:var(--vert);color:white;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;">Nouveau signalement</button>
+  </div>
+  <div id="error-msg"><p id="errorText"></p></div>
+</main>
+</div><!-- fin #app-formulaire -->
 
 <script>
 const SUPABASE_URL='https://clakdvjcytmtubenprux.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0';
 
-const params = new URLSearchParams(window.location.search);
-const token = params.get('token');
-let ticketId = null;
+// Données complètes des écoles (adresse, tél, mail) issues du tableau de circonscription
+const ECOLES_DATA={
+  'BELLEPIERRE':[
+    {label:'Prim. Application Bellepierre',nom:'Application Bellepierre',adresse:'12 rue des Saphirs - Bellepierre - 97400 Saint-Denis',tel:'0262 21 05 88',mail:'ce.9740583R@ac-reunion.fr'},
+    {label:'Él. Topazes',nom:'Topazes',adresse:'133 bis allée des Topazes Bellepierre - 97400 Saint-Denis',tel:'0262 21 17 83',mail:'ce.9740234L@ac-reunion.fr'},
+    {label:'Mat. Les Rubis',nom:'Les Rubis',adresse:'45, allée des Rubis - Bellepierre - 97400 Saint-Denis',tel:'0262 21 10 37',mail:'ce.9740630S@ac-reunion.fr'},
+    {label:'Mat. La Source',nom:'La Source',adresse:'60 Bd de la Source - 97400 Saint-Denis',tel:'0262 21 34 12',mail:'ce.9740689F@ac-reunion.fr'},
+  ],
+  'BOIS DE NÈFLES':[
+    {label:'Prim. Piton Bois de Nèfles',nom:'Piton Bois de Nèfles',adresse:'173, route Piton Bois de Nèfles - 97490 Ste-Clotilde',tel:'0262 28 21 85',mail:'ce.9740666F@ac-reunion.fr'},
+    {label:'Él. Bois de Nèfles',nom:'Bois de Nèfles',adresse:'151, route des Ananas - 97490 Ste-Clotilde',tel:'0262 28 27 93',mail:'ce.9740128W@ac-reunion.fr'},
+    {label:'Mat. Bois de Nèfles',nom:'Bois de Nèfles',adresse:'132 Route des Ananas - 97490 Ste-Clotilde',tel:'0262 28 24 07',mail:'ce.9740824C@ac-reunion.fr'},
+    {label:'Él. Les Bringelliers',nom:'Les Bringelliers',adresse:'18, chemin des Bringelliers - 97490 Ste-Clotilde',tel:'0262 29 42 58',mail:'ce.9740977U@ac-reunion.fr'},
+    {label:'Mat. Les Bringelliers',nom:'Les Bringelliers',adresse:'18 bis, chemin des Bringelliers - 97490 Ste-Clotilde',tel:'0262 29 18 38',mail:'ce.9740976T@ac-reunion.fr'},
+  ],
+  'BRETAGNE':[
+    {label:'Prim. Maxime Laope',nom:'Maxime Laope',adresse:'2, chemin du Finistère - 97490 Ste-Clotilde',tel:'0262 52 52 36',mail:'ce.9740491R@ac-reunion.fr'},
+    {label:'Prim. Philibert Commerson',nom:'Philibert Commerson',adresse:'252, route Gabriel Macé - 97490 Ste-Clotilde',tel:'0262 52 52 24',mail:'ce.9740117J@ac-reunion.fr'},
+    {label:'Él. Bory de Saint-Vincent',nom:'Bory de Saint-Vincent',adresse:'4, chemin Bois Rouge - 97490 Ste-Clotilde',tel:'0262 52 52 47',mail:'ce.9740212M@ac-reunion.fr'},
+    {label:'Prim. Grand Canal',nom:'Grand Canal',adresse:'79, chemin Grand Canal - 97490 Ste-Clotilde',tel:'0262 52 52 69',mail:'ce.9740631T@ac-reunion.fr'},
+    {label:'Mat. Aurore',nom:'Aurore',adresse:'152, route Gabriel Macé - 97490 Ste-Clotilde',tel:'0262 52 56 97',mail:'ce.9740864W@ac-reunion.fr'},
+  ],
+  'BRÛLÉ':[
+    {label:'Prim. Le Brûlé',nom:'Le Brûlé',adresse:'11 chemin des Frangipaniers - Le Brûlé - 97400 Saint-Denis',tel:'0262 23 01 16',mail:'ce.9740121N@ac-reunion.fr'},
+  ],
+  'CENTRE VILLE':[
+    {label:'Él. Application Léon Dierx',nom:'Application Léon Dierx',adresse:'62, rue Ste-Marie - 97400 Saint-Denis',tel:'0262 21 09 14',mail:'ce.9740241U@ac-reunion.fr'},
+    {label:'Prim. Ancien Théâtre',nom:'Ancien Théâtre',adresse:'73, rue Alexis de Villeneuve - 97400 Saint-Denis',tel:'0262 21 32 82',mail:'ce.9740120M@ac-reunion.fr'},
+    {label:'Él. Centrale',nom:'Centrale',adresse:'121 bis, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 16 76',mail:'ce.9741073Y@ac-reunion.fr'},
+    {label:'Mat. Centrale',nom:'Centrale',adresse:'51, rue Sainte-Anne - 97400 Saint-Denis',tel:'0262 21 32 65',mail:'ce.9740796X@ac-reunion.fr'},
+    {label:'Mat. Les Flamboyants',nom:'Les Flamboyants',adresse:'157, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 13 82',mail:'ce.9740629R@ac-reunion.fr'},
+    {label:'Mat. Gisèle Calmy',nom:'Gisèle Calmy',adresse:'107 bis, rue Ste-Marie - 97400 Saint-Denis',tel:'0262 21 03 29',mail:'ce.9740794V@ac-reunion.fr'},
+    {label:'Él. Joinville',nom:'Joinville',adresse:'132, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 06 45',mail:'ce.9740134C@ac-reunion.fr'},
+  ],
+  'CHAUDRON':[
+    {label:'Él. Damase Legros',nom:'Damase Legros',adresse:'16, rue de la Gare - 97490 Ste-Clotilde',tel:'0262 28 04 96',mail:'ce.9741198J@ac-reunion.fr'},
+    {label:'Mat. Damase Legros',nom:'Damase Legros',adresse:'14, rue de la Gare - 97490 Ste-Clotilde',tel:'0262 28 13 93',mail:'ce.9740700T@ac-reunion.fr'},
+    {label:'Él. Michel Debré',nom:'Michel Debré',adresse:'3, rue Bridet - 97490 Ste-Clotilde',tel:'0262 28 05 86',mail:'ce.9740208H@ac-reunion.fr'},
+    {label:'Mat. Michel Debré',nom:'Michel Debré',adresse:'8, Rue Indiana - 97490 Ste-Clotilde',tel:'0262 28 00 78',mail:'ce.9740126U@ac-reunion.fr'},
+    {label:'Él. Herbinière Lebert',nom:'Herbinière Lebert',adresse:'66, avenue Joseph Bédier - 97490 Ste-Clotilde',tel:'0262 28 11 35',mail:'ce.9740207G@ac-reunion.fr'},
+    {label:'Mat. Herbinière Lebert',nom:'Herbinière Lebert',adresse:'62, avenue Joseph Bédier - 97490 Ste-Clotilde',tel:'0262 28 11 06',mail:'ce.9740783H@ac-reunion.fr'},
+    {label:'Prim. Primat',nom:'Primat',adresse:"30, rue du Stade de l'Est - 97490 Ste-Clotilde",tel:'0262 28 23 85',mail:'ce.9740591Z@ac-reunion.fr'},
+  ],
+  'DOMENJOD':[
+    {label:'Él. Domenjod (Ficus)',nom:'Domenjod (Ficus)',adresse:'45, route de Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 70',mail:'ce.9740211L@ac-reunion.fr'},
+    {label:'Él. Domenjod annexe',nom:'Domenjod annexe',adresse:'chemin du case - Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 44',mail:''},
+    {label:'Mat. Cocotiers',nom:'Cocotiers',adresse:'chemin du case - Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 87',mail:''},
+  ],
+  'MONTAGNE 15ÈME':[
+    {label:'Él. Saint-Bernard 15ème',nom:'Saint-Bernard 15ème',adresse:'69, rue du Père Raimbault - 97417 La Montagne',tel:'0262 23 61 13',mail:'ce.9740133B@ac-reunion.fr'},
+    {label:'Prim. Les Affouches',nom:'Les Affouches',adresse:'52, route Antide Boyer - 97417 La Montagne',tel:'0262 23 62 14',mail:'ce.9740124S@ac-reunion.fr'},
+    {label:'Mat. Saint Bernard 15ème',nom:'Saint Bernard 15ème',adresse:'61, Rue du Père Raimbault - 97417 La Montagne',tel:'0262 23 62 44',mail:'ce.9740665E@ac-reunion.fr'},
+  ],
+  'MONTAGNE 8ÈME':[
+    {label:'Él. Philippe Vinson',nom:'Philippe Vinson',adresse:'34, route des Palmiers - 97417 La Montagne',tel:'0262 23 63 07',mail:'ce.9740237P@ac-reunion.fr'},
+    {label:'Él. Gérard Lauret',nom:'Gérard Lauret',adresse:'3, chemin Manès Charles Olivier - 97417 La Montagne',tel:'0262 23 60 14',mail:'ce.9740242V@ac-reunion.fr'},
+    {label:'Mat. Ruisseau Blanc',nom:'Ruisseau Blanc',adresse:'1 chemin des Fucréas - 97417 La Montagne',tel:'0262 23 62 45',mail:'ce.9740773X@ac-reunion.fr'},
+    {label:'Mat. Philippe Vinson 8ème',nom:'Philippe Vinson 8ème',adresse:'5 bis, chemin Bailly - 97417 La Montagne',tel:'0262 23 61 93',mail:'ce.9740795W@ac-reunion.fr'},
+  ],
+  'MONTGAILLARD':[
+    {label:'Él. Candide Azéma A',nom:'Candide Azéma A',adresse:'99, Rue Victor Hugo - 97400 Saint-Denis',tel:'0262 30 35 25',mail:'ce.9740244X@ac-reunion.fr'},
+    {label:'Él. Candide Azéma B',nom:'Candide Azéma B',adresse:'28, Bd de la Trinité - 97400 Saint-Denis',tel:'0262 56 34 81',mail:'ce.9740136E@ac-reunion.fr'},
+    {label:'Mat. La Providence',nom:'La Providence',adresse:'33 bis, Bd de la Providence - 97400 Saint-Denis',tel:'0262 30 63 62',mail:'ce.9740997R@ac-reunion.fr'},
+    {label:'Mat. Montgaillard',nom:'Montgaillard',adresse:'43, rue du Stade - Montgaillard - 97400 Saint-Denis',tel:'0262 30 11 26',mail:'ce.9740865X@ac-reunion.fr'},
+    {label:'Él. Henry Dunant',nom:'Henry Dunant',adresse:'99, Bd de la Trinité - 97400 Saint-Denis',tel:'0262 30 06 43',mail:'ce.9740122P@ac-reunion.fr'},
+    {label:'Mat. Françoise Mollard',nom:'Françoise Mollard',adresse:"56, Allée de la Maternelle - 97400 Saint-Denis",tel:'0262 30 24 11',mail:'ce.9740607S@ac-reunion.fr'},
+    {label:'Prim. La Chaumière',nom:'La Chaumière',adresse:'2, rue de la Chaumière - 97400 Saint-Denis',tel:'0262 30 34 52',mail:'ce.9741267J@ac-reunion.fr'},
+  ],
+  'MOUFIA':[
+    {label:'Él. Les Bancouliers',nom:'Les Bancouliers',adresse:'6, allée des Kentias - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 00 98',mail:'ce.9740210K@ac-reunion.fr'},
+    {label:'Mat. Les Bancouliers',nom:'Les Bancouliers',adresse:'8, allée des Kentias - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 12 56',mail:'ce.9740713G@ac-reunion.fr'},
+    {label:'Prim. Les Eglantines',nom:'Les Eglantines',adresse:'13, rue de la Chapelle - 97490 Ste-Clotilde',tel:'0262 29 71 04',mail:'ce.9740995N@ac-reunion.fr'},
+    {label:'Él. Alain Lorraine',nom:'Alain Lorraine',adresse:'91, Allée des Tulipes - 97490 Ste-Clotilde',tel:'0262 29 02 29',mail:'ce.9740926N@ac-reunion.fr'},
+    {label:'Mat. Les Tulipiers',nom:'Les Tulipiers',adresse:'89, Allée des Tulipes - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 68 16',mail:'ce.9740901L@ac-reunion.fr'},
+    {label:'Él. Les Badamiers',nom:'Les Badamiers',adresse:'67, rue du Père Lafosse - 97490 Ste-Clotilde',tel:'0262 28 28 54',mail:'ce.9740745S@ac-reunion.fr'},
+    {label:'Mat. Les Badamiers',nom:'Les Badamiers',adresse:'28C route du Moufia - 97490 Ste-Clotilde',tel:'0262 28 29 42',mail:'ce.9740709C@ac-reunion.fr'},
+    {label:'Prim. Les Baies Roses',nom:'Les Baies Roses',adresse:'7 rue Pierre de Coubertin - Le Moufia - 97490 Ste-Clotilde',tel:'0262 29 44 72',mail:'ce.9741203P@ac-reunion.fr'},
+  ],
+  'RIVIÈRE / PETITE ÎLE':[
+    {label:'Él. Jules Reydellet A',nom:'Jules Reydellet A',adresse:'94, rue de la République - 97400 Saint-Denis',tel:'0262 21 49 36',mail:'ce.9741252T@ac-reunion.fr'},
+    {label:'Él. Jules Reydellet B',nom:'Jules Reydellet B',adresse:'101, rue de la République - 97400 Saint-Denis',tel:'0262 21 32 62',mail:'ce.9741252T@ac-reunion.fr'},
+    {label:'Mat. Petite Île',nom:'Petite Île',adresse:'94, rue de la République - 97400 Saint-Denis',tel:'0262 41 19 80',mail:'ce.9740684A@ac-reunion.fr'},
+    {label:'Mat. Ylang Ylang',nom:'Ylang Ylang',adresse:'15, rue de la Digue - 97400 Saint-Denis',tel:'0262 21 94 09',mail:'ce.9740744R@ac-reunion.fr'},
+    {label:'Mat. Rivière II',nom:'Rivière II',adresse:'43 Bis, Quai Est rue de la République - 97400 Saint-Denis',tel:'0262 21 08 96',mail:'ce.9740940D@ac-reunion.fr'},
+  ],
+  'SAINT FRANÇOIS':[
+    {label:'Él. Saint-François PK7',nom:'Saint-François PK7',adresse:"10, Allée des Ecoles - 97400 Saint Denis",tel:'0262 30 09 71',mail:'ce.9740127V@ac-reunion.fr'},
+    {label:'Mat. Saint-François PK7',nom:'Saint-François PK7',adresse:'137, route de Saint François - 97400 Saint-Denis',tel:'0262 30 09 33',mail:'ce.9740628P@ac-reunion.fr'},
+  ],
+  'SAINTE CLOTILDE':[
+    {label:'Él. Les Tamarins',nom:'Les Tamarins',adresse:'109, rue Lory les Hauts - 97490 Ste-Clotilde',tel:'0262 28 14 19',mail:'ce.9740772W@ac-reunion.fr'},
+    {label:'Mat. Les Tamarins',nom:'Les Tamarins',adresse:'78, rue Lacroix - 97490 Ste-Clotilde',tel:'0262 28 21 52',mail:'ce.9740743P@ac-reunion.fr'},
+    {label:'Prim. Jean-Baptiste Bossard',nom:'Jean-Baptiste Bossard',adresse:'7, rue Lacroix - 97490 Ste-Clotilde',tel:'0262 28 21 40',mail:'ce.9740667G@ac-reunion.fr'},
+    {label:'Él. Lilas',nom:'Lilas',adresse:'4, rue de la Cure - 97490 Ste-Clotilde',tel:'0262 28 00 96',mail:'ce.9741259A@ac-reunion.fr'},
+    {label:'Mat. Les Jacarandas',nom:'Les Jacarandas',adresse:'2, rue de la Cure - 97490 Ste-Clotilde',tel:'0262 28 07 58',mail:'ce.9740708B@ac-reunion.fr'},
+    {label:'Mat. Claude Debussy',nom:'Claude Debussy',adresse:'16, rue Frédéric Chopin - 97490 Ste-Clotilde',tel:'0262 29 70 72',mail:'ce.9740662B@ac-reunion.fr'},
+    {label:'Él. Champ Fleuri',nom:'Champ Fleuri',adresse:'46, ruelle Magnan - 97490 Ste-Clotilde',tel:'0262 21 34 87',mail:'ce.9740206F@ac-reunion.fr'},
+    {label:'Mat. Champ Fleuri',nom:'Champ Fleuri',adresse:'19 Ruelle Magnan - 97490 Ste-Clotilde',tel:'0262 21 34 86',mail:'ce.9740823B@ac-reunion.fr'},
+  ],
+  'SOURCE':[
+    {label:'Él. Gabriel Macé',nom:'Gabriel Macé',adresse:'3A, Rue de la Source - 97400 Saint-Denis',tel:'0262 21 22 95',mail:'ce.9741074Z@ac-reunion.fr'},
+    {label:'Prim. Raymond Mondon',nom:'Raymond Mondon',adresse:'2, Rue Nicole de la Serve - 97400 Saint-Denis',tel:'0262 21 17 56',mail:'ce.9740236N@ac-reunion.fr'},
+    {label:'Él. Les Camélias',nom:'Les Camélias',adresse:"5, Rue Nicole de la Serve - 97400 Saint-Denis",tel:'0262 21 18 20',mail:'ce.9740245Y@ac-reunion.fr'},
+  ],
+};
 
-async function init(){
-  if(!token){
-    showError('Lien invalide. Ce lien de clôture est incorrect ou a expiré.');
+const TYPES_PAR_CELLULE={
+  'Restauration scolaire':['Demande concernant les appareils','Demande de maintenance','Demande de nettoyage','Demande de maintenance du bâti cantine','Diverse'],
+  'Informatique':['Demande de maintenance informatique','Problème de software','Demande de maintenance téléphonique','Souci de reprographie','Problème de connexion divers','Diverse'],
+  'Mobilier':['Demande de mobilier supplémentaire','Demande de remplacement de mobilier usagé','Demande d\'évacuation de mobilier','Demande diverse liée au mobilier','Diverse'],
+  'Ventilateur / Brasseur d\'air':['Panne de ventilateur','Panne de brasseur d\'air','Nouvelle demande d\'installation','Diverse'],
+  'Couture / Textile — Rideau / Double des clés':['Demande de double de clé','Demande de BIP','Demande de rideau','Diverse'],
+  'DTP':['Demande d\'intervention de maintenance','Demande de travaux divers','Demande d\'intervention sur l\'installation électrique','Demande de maintenance de l\'alarme anti-intrusion','Diverse'],
+  'DSB':['Demande d\'étanchéité','Demande de ravalement','Demande de réfection de sanitaire','Demande de réfection de sol souple','Demande de réfection de sol synthétique','Demande de création de salle de classe','Demande d\'aménagement','Diverse'],
+  'Élagage et abattage d\'arbres':['Demande de déplacement','Demande de plantation','Demande diverse par rapport à l\'aménagement paysager','Diverse'],
+  'ERP / Alarmes / Extincteurs':['Demande de maintenance de l\'alarme incendie','Demande de maintenance des extracteurs','Diverse'],
+  'Dératisation et traitement 3D':['Demande de dératisation','Demande de désinsectisation','Demande de dératisation et désinsectisation','Demande d\'intervention pour l\'entretien des pièges','Diverse'],
+};
+
+// Variables globales
+let _ecoleIdentifiee = null;
+let _modeLibre = false;
+
+
+function majTypes(){
+  const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
+  const sel=document.getElementById('type_travaux');
+  const hint=document.getElementById('typeHint');
+  sel.innerHTML='';
+  if(!cellule){
+    sel.innerHTML='<option value="">-- Sélectionnez d\'abord une cellule --</option>';
+    hint.textContent='Sélectionnez d\'abord une cellule';
     return;
   }
-  try{
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/tickets?token_cloture=eq.${token}&select=id,ecole,secteur,cellule,type_travaux,description,priorite,statut,created_at`,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}}
-    );
-    const data = await res.json();
-    if(!data.length){
-      showError('Ticket introuvable. Ce lien est invalide ou a déjà été utilisé.');
-      return;
-    }
-    const t = data[0];
-    ticketId = t.id;
-    if(['resolu','annule'].includes(t.statut)){
-      document.getElementById('mainIcon').textContent='ℹ️';
-      document.getElementById('mainTitle').textContent='Ticket déjà clôturé';
-      document.getElementById('mainDesc').textContent='Ce ticket a déjà été marqué comme résolu. Aucune action nécessaire.';
-      return;
-    }
-    // Afficher les infos du ticket
-    const date = new Date(t.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
-    document.getElementById('ticketInfo').innerHTML=`
-      <div><strong>École :</strong> ${t.ecole||'–'}</div>
-      <div><strong>Secteur :</strong> ${t.secteur||'–'}</div>
-      <div><strong>Cellule :</strong> ${t.cellule||'–'}</div>
-      <div><strong>Type :</strong> ${t.type_travaux||'–'}</div>
-      <div><strong>Description :</strong> ${t.description||'–'}</div>
-      <div><strong>Signalé le :</strong> ${date}</div>
-    `;
-    document.getElementById('mainIcon').textContent='🔧';
-    document.getElementById('mainTitle').textContent='Confirmer la clôture';
-    document.getElementById('mainDesc').textContent='Vous êtes sur le point de marquer ce ticket comme résolu. Confirmez si les travaux ont bien été réalisés.';
-    document.getElementById('ticketInfo').style.display='block';
-    document.getElementById('actions').style.display='block';
-  }catch(e){
-    showError('Erreur de connexion. Veuillez réessayer.');
-  }
+  const types=TYPES_PAR_CELLULE[cellule]||[];
+  sel.innerHTML='<option value="">-- Sélectionner le type --</option>';
+  types.forEach(t=>{const o=document.createElement('option');o.value=o.textContent=t;sel.appendChild(o);});
+  hint.textContent=types.length+' types disponibles pour cette cellule';
+  majProgression();
 }
 
-async function cloturerTicket(){
-  if(!ticketId) return;
-  document.getElementById('spinner').style.display='block';
-  document.getElementById('btnText').textContent='Clôture en cours…';
-  document.getElementById('btnConfirmer').disabled=true;
-  try{
-    const payload={
-      statut:'resolu',
-      updated_at: new Date().toISOString(),
-      updated_by: 'cloture_mail',
-      commentaires: null // sera enrichi ci-dessous
-    };
-    // Récupérer les commentaires existants pour y ajouter une note
-    const r2 = await fetch(`${SUPABASE_URL}/rest/v1/tickets?id=eq.${ticketId}&select=commentaires`,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
-    const d2 = await r2.json();
-    const ancien = d2[0]?.commentaires||'';
-    const note = `[${new Date().toLocaleDateString('fr-FR')}]{cloture_mail} Ticket clôturé via lien mail par le référent.`;
-    payload.commentaires = ancien ? ancien+'\n\n'+note : note;
+// Date min = aujourd'hui
+document.getElementById('date_souhaitee').min=new Date().toISOString().split('T')[0];
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/tickets?id=eq.${ticketId}`,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
-      body:JSON.stringify(payload)
+function majEcoles(){
+  const s=document.getElementById('secteur-select').value;
+  document.getElementById('secteur').value=s;
+  const el=document.getElementById('ecole-select');
+  el.innerHTML='<option value="">-- Sélectionner une école --</option>';
+  document.getElementById('fiche-ecole').style.display='none';
+  if(s&&ECOLES_DATA[s]){
+    ECOLES_DATA[s].forEach((e,i)=>{
+      const o=document.createElement('option');
+      o.value=i;
+      o.textContent=e.label;
+      el.appendChild(o);
     });
-    if(!res.ok) throw new Error();
-    // Succès
-    document.getElementById('actions').style.display='none';
-    document.getElementById('ticketInfo').style.display='none';
-    document.getElementById('mainIcon').textContent='✅';
-    document.getElementById('mainTitle').textContent='Ticket clôturé avec succès';
-    document.getElementById('mainDesc').textContent='Merci ! Le ticket a été marqué comme résolu et l\'historique mis à jour.';
-    document.getElementById('successMsg').style.display='block';
-  }catch(e){
-    showError('Erreur lors de la clôture. Veuillez réessayer ou contacter l\'administrateur.');
-    document.getElementById('spinner').style.display='none';
-    document.getElementById('btnText').textContent='✅ Confirmer la clôture';
-    document.getElementById('btnConfirmer').disabled=false;
+  }
+  document.getElementById('ecole').value='';
+  majProgression();
+}
+
+function majFicheEcole(){
+  const s=document.getElementById('secteur-select').value;
+  const idx=document.getElementById('ecole-select').value;
+  const fiche=document.getElementById('fiche-ecole');
+  if(s&&idx!==''&&ECOLES_DATA[s]){
+    const e=ECOLES_DATA[s][parseInt(idx)];
+    document.getElementById('fiche-adresse').textContent=e.adresse||'—';
+    document.getElementById('fiche-tel').textContent=e.tel||'—';
+    document.getElementById('fiche-mail').textContent=e.mail||'—';
+    fiche.style.display='block';
+    document.getElementById('ecole').value=e.nom;
+  } else {
+    fiche.style.display='none';
+    document.getElementById('ecole').value='';
+  }
+  majProgression();
+}
+
+function majProgression(){
+  const emailOk = _ecoleIdentifiee!==null || _modeLibre;
+  const s1=document.getElementById('dem_nom')?.value&&document.getElementById('dem_role')?.value&&emailOk;
+  const s2=document.getElementById('secteur')?.value&&document.getElementById('ecole')?.value;
+  const s3=document.querySelector('input[name=cellule]:checked');
+  const s4=document.getElementById('type_travaux')?.value&&document.getElementById('description')?.value;
+  ['ps1','ps2','ps3','ps4'].forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('done',[s1,s2,s3,s4][i]);
+    document.getElementById('pl'+(i+1)).classList.toggle('active',[s1,s2,s3,s4][i]);
+  });
+}
+document.querySelectorAll('input[name=cellule]').forEach(el=>el.addEventListener('change',()=>{majTypes();majProgression();}));
+document.querySelectorAll('input[type=text],input[type=tel],textarea').forEach(el=>el.addEventListener('input',majProgression));
+
+function previewPhotos(input){
+  const preview=document.getElementById('uploadPreview');
+  preview.innerHTML='';
+  Array.from(input.files).slice(0,3).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=document.createElement('img');
+      img.src=e.target.result;img.className='preview-img';
+      preview.appendChild(img);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+async function imageToBase64(file){
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+}
+
+document.getElementById('mainForm').addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  const spinner=document.getElementById('spinner');
+  btn.disabled=true;spinner.style.display='block';
+  document.getElementById('btnText').textContent='Envoi en cours…';
+  document.getElementById('error-msg').style.display='none';
+
+  const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
+  const secteur=document.getElementById('secteur').value;
+  const ecoleNom=document.getElementById('ecole').value;
+
+  let photosData=null;
+  const photoInput=document.getElementById('photoInput');
+  if(photoInput.files.length>0){
+    const b64arr=[];
+    for(const f of Array.from(photoInput.files).slice(0,3)){
+      try{b64arr.push({nom:f.name,data:await imageToBase64(f)});}catch(err){}
+    }
+    if(b64arr.length) photosData=JSON.stringify(b64arr);
+  }
+
+  const data={
+    demandeur_nom:document.getElementById('dem_nom').value,
+    demandeur_role:document.getElementById('dem_role').value,
+    demandeur_email:document.getElementById('dem_email').value,
+    demandeur_tel:document.getElementById('dem_tel').value||null,
+    secteur:secteur,
+    ecole:ecoleNom,
+    localisation:document.getElementById('localisation').value||null,
+    cellule:cellule,
+    type_travaux:document.getElementById('type_travaux').value,
+    priorite:document.getElementById('priorite').value,
+    date_souhaitee:document.getElementById('date_souhaitee').value||null,
+    description:document.getElementById('description').value,
+    commentaires:document.getElementById('commentaires').value||null,
+    photos:photosData,
+    statut:'nouveau',
+    token_cloture: crypto.randomUUID()
+  };
+
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/tickets`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=representation'},
+      body:JSON.stringify(data)
+    });
+    if(!res.ok){const err=await res.json();throw new Error(err.message||'Erreur serveur');}
+    const result=await res.json();
+    const ref=result[0]?.id?.slice(0,8).toUpperCase();
+    document.getElementById('mainForm').style.display='none';
+    document.getElementById('success-msg').style.display='block';
+    document.getElementById('ticketRef').textContent='Référence : '+ref;
+    document.getElementById('confirmEmail').textContent=data.demandeur_email;
+  }catch(err){
+    document.getElementById('error-msg').style.display='block';
+    document.getElementById('errorText').textContent='Erreur : '+err.message;
+    btn.disabled=false;spinner.style.display='none';
+    document.getElementById('btnText').textContent='Envoyer le signalement';
+  }
+});
+
+function seDeconnecter(){
+  // Revenir à l'écran de connexion
+  document.getElementById('app-formulaire').style.display='none';
+  document.getElementById('ecran-connexion').style.display='flex';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('login-email').focus();
+  // Réinitialiser l'état
+  _ecoleIdentifiee=null; _modeLibre=false;
+}
+
+function resetForm(){
+  document.getElementById('mainForm').reset();
+  document.getElementById('mainForm').style.display='block';
+  document.getElementById('success-msg').style.display='none';
+  document.getElementById('uploadPreview').innerHTML='';
+  document.querySelectorAll('.prog-step').forEach(s=>s.classList.remove('done'));
+  // Réinitialiser l'identification par email
+  _ecoleIdentifiee=null; _modeLibre=false;
+  document.getElementById('suite-identification').style.display='none';
+  document.getElementById('badge-ecole').style.display='none';
+  document.getElementById('email-status').textContent='';
+  document.getElementById('email-msg').style.display='none';
+  document.getElementById('ecole-verrouillee').style.display='none';
+  document.getElementById('ecole-libre').style.display='block';
+  document.getElementById('ecole-select').innerHTML='<option value="">-- Choisir le secteur d\'abord --</option>';
+  document.getElementById('fiche-ecole').style.display='none';
+  document.getElementById('secteur').value='';
+  document.getElementById('ecole').value='';
+}
+
+// ===== LOGIQUE DE CONNEXION =====
+function connexion(){
+  const email = document.getElementById('login-email').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if(!email || !email.includes('@')){
+    errEl.style.display = 'block';
+    errEl.textContent = 'Veuillez saisir une adresse email valide.';
+    return;
+  }
+
+  // Chercher dans ECOLES_DATA
+  let ecoleFound = null;
+  for(const [secteur, ecoles] of Object.entries(ECOLES_DATA)){
+    for(const e of ecoles){
+      if(e.mail && e.mail.toLowerCase() === email.toLowerCase()){
+        ecoleFound = {...e, secteur};
+        break;
+      }
+    }
+    if(ecoleFound) break;
+  }
+
+  const DOMAINES_DE = ['@mairie-saintdenis.fr', '@ville-saintdenis.fr', '@st-denis.re'];
+
+  if(ecoleFound){
+    _ecoleIdentifiee = ecoleFound;
+    _modeLibre = false;
+    ouvrirFormulaire(email, ecoleFound);
+  } else if(DOMAINES_DE.some(d => email.toLowerCase().endsWith(d))){
+    _ecoleIdentifiee = null;
+    _modeLibre = true;
+    ouvrirFormulaire(email, null);
+  } else {
+    errEl.style.display = 'block';
+    errEl.innerHTML = '⛔ Adresse email non reconnue.<br>Utilisez l\'email de votre école <strong>(ce.XXXXXXX@ac-reunion.fr)</strong> ou votre email de la Direction de l\'Éducation.';
   }
 }
 
-function showError(msg){
-  document.getElementById('mainIcon').textContent='❌';
-  document.getElementById('mainTitle').textContent='Impossible de clôturer';
-  document.getElementById('mainDesc').textContent='';
-  document.getElementById('errorMsg').textContent=msg;
-  document.getElementById('errorMsg').style.display='block';
-}
+function ouvrirFormulaire(email, ecole){
+  document.getElementById('ecran-connexion').style.display = 'none';
+  document.getElementById('app-formulaire').style.display = 'block';
+  document.getElementById('dem_email').value = email;
 
-init();
+  if(ecole){
+    _ecoleIdentifiee = ecole;
+    document.getElementById('badge-nom-ecole').textContent = ecole.label + ' — ' + ecole.secteur;
+    document.getElementById('badge-ecole').style.display = 'flex';
+    document.getElementById('suite-identification').style.display = 'block';
+    document.getElementById('verr-nom').textContent = ecole.label;
+    document.getElementById('verr-adresse').textContent = ecole.adresse || '—';
+    document.getElementById('verr-tel').textContent = ecole.tel || '—';
+    document.getElementById('verr-mail').textContent = ecole.mail;
+    document.getElementById('secteur').value = ecole.secteur;
+    document.getElementById('ecole').value = ecole.nom;
+    document.getElementById('ecole-verrouillee').style.display = 'block';
+    document.getElementById('ecole-libre').style.display = 'none';
+  } else {
+    document.getElementById('suite-identification').style.display = 'block';
+    document.getElementById('badge-ecole').style.display = 'none';
+    document.getElementById('ecole-verrouillee').style.display = 'none';
+    document.getElementById('ecole-libre').style.display = 'block';
+  }
+  majProgression();
+}
 </script>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.9 — 17/03/2026</div>
 </body>
 </html>
