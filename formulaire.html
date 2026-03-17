@@ -157,7 +157,7 @@
           </div>
           <div class="field">
             <label>École <span class="req">*</span></label>
-            <select id="ecole" required>
+            <select id="ecole" required onchange="majFicheEcole()">
               <option value="">-- Choisir le secteur d'abord --</option>
             </select>
           </div>
@@ -165,6 +165,13 @@
         <div class="field">
           <label>Localisation précise <span class="hint">Facultatif</span></label>
           <input type="text" id="localisation" placeholder="Ex : Salle B3, toiture aile Est, cantine…">
+        </div>
+        <!-- Fiche école -->
+        <div id="fiche-ecole" style="display:none;background:var(--bleu-pale);border:1px solid #CBD5E1;border-radius:10px;padding:12px 16px;font-size:13px;color:var(--texte);line-height:1.8;">
+          <div style="font-weight:600;color:var(--bleu);margin-bottom:6px;">📍 Coordonnées de l'école</div>
+          <div>🏠 <span id="fiche-adresse"></span></div>
+          <div>📞 <span id="fiche-tel"></span></div>
+          <div>✉️ <span id="fiche-mail"></span></div>
         </div>
       </div>
     </div>
@@ -261,23 +268,110 @@
 const SUPABASE_URL='https://clakdvjcytmtubenprux.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0';
 
-const ECOLES={
-  'BELLEPIERRE':['Elém. Les Topazes','Mat. Rubis','Prim. Appl. Bellepierre'],
-  'BOIS DE NÈFLES':['Elém. Bois de Nèfles','Elém. Bringelliers','Mat. Bois de Nèfles','Prim. Pit. B. de Nèfles'],
-  'BRETAGNE':['Mat. Aurore','Prim. Bory Saint Vincent','Prim. Grand Canal','Prim. Maxime Laope','Prim. Phil. Commerson'],
-  'BRÛLÉ':['Brûlé'],
-  'CENTRE VILLE':['Elém. Appli. Léon Dierx','Elém. Centrale','Elém. Joinville','Mat. Centrale','Mat. Gisèle Calmy','Mat. Les Flamboyants','Prim. Ancien Théatre'],
-  'CAMÉLIAS':['Elém. Les Camélias','Elém. Raymond Mondon','Mat. Les Camélias','Mat. Providence'],
-  'CHAUDRON':['Elém. Badamiers','Elém. Champ Fleuri','Elém. Damase Legros','Elém. H. Lebert','Elem. Michel Debré','Mat. Champ-Fleuri','Mat. Damase Legros','Mat. H. Lebert','Mat. Michel Debré','Prim. Primat'],
-  'DOMENJOD':['Elém. Domenjod','Mat. Cocotiers'],
-  'MONTAGNE 15ÈME':['Elém. St-Bernard','Mat. 15è St Bernard','Prim. Les Affouches'],
-  'MONTAGNE 8ÈME':['Elém. Philip Vinson','Elém. Ruisseau Blanc','Mat. 8è Philip. Vinson','Mat. Ruisseau Blanc'],
-  'MONTGAILLARD':['Elém. Alain Lorraine','Elém. Candide Azéma A','Elém. Candide Azéma B','Elém. H. Dunant','Mat. Bouvet','Mat. Françoise Mollard','Mat. Les Flamboyants','Mat. Montgaillard','Prim. La Chaumière'],
-  'MOUFIA':['Annexe Tulipiers','Elém. Bancouliers','Elém. Baies Roses','Mat. Bancouliers','Mat. Baies Roses','Mat. Tulipiers','Prim. Baies Roses','Prim. Eglantines'],
-  'RIVIÈRE / PETITE ÎLE':['Elém. J.Reydellet A','Elém. J.Reydellet B','Mat. Petite Île','Mat. Rivière 2','Mat. Ylang Ylang'],
-  'SAINT FRANÇOIS':['Elém. St-François PK7','Mat. Saint François PK7'],
-  'SAINTE CLOTILDE':['Elém. Champ Fleuri','Elém. Les Lilas','Elém. Les Tamarins','Mat. Champ-Fleuri','Mat. Débussy','Mat. Les Jacarandas','Mat. Les Tamarins','Prim. JB Bossard'],
-  'SOURCE':['Elém. G. Macé','Mat. Source']
+// Données complètes des écoles (adresse, tél, mail) issues du tableau de circonscription
+const ECOLES_DATA={
+  'BELLEPIERRE':[
+    {label:'Prim. Application Bellepierre',nom:'Application Bellepierre',adresse:'12 rue des Saphirs - Bellepierre - 97400 Saint-Denis',tel:'0262 21 05 88',mail:'ce.9740583R@ac-reunion.fr'},
+    {label:'Él. Topazes',nom:'Topazes',adresse:'133 bis allée des Topazes Bellepierre - 97400 Saint-Denis',tel:'0262 21 17 83',mail:'ce.9740234L@ac-reunion.fr'},
+    {label:'Mat. Les Rubis',nom:'Les Rubis',adresse:'45, allée des Rubis - Bellepierre - 97400 Saint-Denis',tel:'0262 21 10 37',mail:'ce.9740630S@ac-reunion.fr'},
+    {label:'Mat. La Source',nom:'La Source',adresse:'60 Bd de la Source - 97400 Saint-Denis',tel:'0262 21 34 12',mail:'ce.9740689F@ac-reunion.fr'},
+  ],
+  'BOIS DE NÈFLES':[
+    {label:'Prim. Piton Bois de Nèfles',nom:'Piton Bois de Nèfles',adresse:'173, route Piton Bois de Nèfles - 97490 Ste-Clotilde',tel:'0262 28 21 85',mail:'ce.9740666F@ac-reunion.fr'},
+    {label:'Él. Bois de Nèfles',nom:'Bois de Nèfles',adresse:'151, route des Ananas - 97490 Ste-Clotilde',tel:'0262 28 27 93',mail:'ce.9740128W@ac-reunion.fr'},
+    {label:'Mat. Bois de Nèfles',nom:'Bois de Nèfles',adresse:'132 Route des Ananas - 97490 Ste-Clotilde',tel:'0262 28 24 07',mail:'ce.9740824C@ac-reunion.fr'},
+    {label:'Él. Les Bringelliers',nom:'Les Bringelliers',adresse:'18, chemin des Bringelliers - 97490 Ste-Clotilde',tel:'0262 29 42 58',mail:'ce.9740977U@ac-reunion.fr'},
+    {label:'Mat. Les Bringelliers',nom:'Les Bringelliers',adresse:'18 bis, chemin des Bringelliers - 97490 Ste-Clotilde',tel:'0262 29 18 38',mail:'ce.9740976T@ac-reunion.fr'},
+  ],
+  'BRETAGNE':[
+    {label:'Prim. Maxime Laope',nom:'Maxime Laope',adresse:'2, chemin du Finistère - 97490 Ste-Clotilde',tel:'0262 52 52 36',mail:'ce.9740491R@ac-reunion.fr'},
+    {label:'Prim. Philibert Commerson',nom:'Philibert Commerson',adresse:'252, route Gabriel Macé - 97490 Ste-Clotilde',tel:'0262 52 52 24',mail:'ce.9740117J@ac-reunion.fr'},
+    {label:'Él. Bory de Saint-Vincent',nom:'Bory de Saint-Vincent',adresse:'4, chemin Bois Rouge - 97490 Ste-Clotilde',tel:'0262 52 52 47',mail:'ce.9740212M@ac-reunion.fr'},
+    {label:'Prim. Grand Canal',nom:'Grand Canal',adresse:'79, chemin Grand Canal - 97490 Ste-Clotilde',tel:'0262 52 52 69',mail:'ce.9740631T@ac-reunion.fr'},
+    {label:'Mat. Aurore',nom:'Aurore',adresse:'152, route Gabriel Macé - 97490 Ste-Clotilde',tel:'0262 52 56 97',mail:'ce.9740864W@ac-reunion.fr'},
+  ],
+  'BRÛLÉ':[
+    {label:'Prim. Le Brûlé',nom:'Le Brûlé',adresse:'11 chemin des Frangipaniers - Le Brûlé - 97400 Saint-Denis',tel:'0262 23 01 16',mail:'ce.9740121N@ac-reunion.fr'},
+  ],
+  'CENTRE VILLE':[
+    {label:'Él. Application Léon Dierx',nom:'Application Léon Dierx',adresse:'62, rue Ste-Marie - 97400 Saint-Denis',tel:'0262 21 09 14',mail:'ce.9740241U@ac-reunion.fr'},
+    {label:'Prim. Ancien Théâtre',nom:'Ancien Théâtre',adresse:'73, rue Alexis de Villeneuve - 97400 Saint-Denis',tel:'0262 21 32 82',mail:'ce.9740120M@ac-reunion.fr'},
+    {label:'Él. Centrale',nom:'Centrale',adresse:'121 bis, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 16 76',mail:'ce.9741073Y@ac-reunion.fr'},
+    {label:'Mat. Centrale',nom:'Centrale',adresse:'51, rue Sainte-Anne - 97400 Saint-Denis',tel:'0262 21 32 65',mail:'ce.9740796X@ac-reunion.fr'},
+    {label:'Mat. Les Flamboyants',nom:'Les Flamboyants',adresse:'157, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 13 82',mail:'ce.9740629R@ac-reunion.fr'},
+    {label:'Mat. Gisèle Calmy',nom:'Gisèle Calmy',adresse:'107 bis, rue Ste-Marie - 97400 Saint-Denis',tel:'0262 21 03 29',mail:'ce.9740794V@ac-reunion.fr'},
+    {label:'Él. Joinville',nom:'Joinville',adresse:'132, rue Jules Auber - 97400 Saint-Denis',tel:'0262 21 06 45',mail:'ce.9740134C@ac-reunion.fr'},
+  ],
+  'CHAUDRON':[
+    {label:'Él. Damase Legros',nom:'Damase Legros',adresse:'16, rue de la Gare - 97490 Ste-Clotilde',tel:'0262 28 04 96',mail:'ce.9741198J@ac-reunion.fr'},
+    {label:'Mat. Damase Legros',nom:'Damase Legros',adresse:'14, rue de la Gare - 97490 Ste-Clotilde',tel:'0262 28 13 93',mail:'ce.9740700T@ac-reunion.fr'},
+    {label:'Él. Michel Debré',nom:'Michel Debré',adresse:'3, rue Bridet - 97490 Ste-Clotilde',tel:'0262 28 05 86',mail:'ce.9740208H@ac-reunion.fr'},
+    {label:'Mat. Michel Debré',nom:'Michel Debré',adresse:'8, Rue Indiana - 97490 Ste-Clotilde',tel:'0262 28 00 78',mail:'ce.9740126U@ac-reunion.fr'},
+    {label:'Él. Herbinière Lebert',nom:'Herbinière Lebert',adresse:'66, avenue Joseph Bédier - 97490 Ste-Clotilde',tel:'0262 28 11 35',mail:'ce.9740207G@ac-reunion.fr'},
+    {label:'Mat. Herbinière Lebert',nom:'Herbinière Lebert',adresse:'62, avenue Joseph Bédier - 97490 Ste-Clotilde',tel:'0262 28 11 06',mail:'ce.9740783H@ac-reunion.fr'},
+    {label:'Prim. Primat',nom:'Primat',adresse:"30, rue du Stade de l'Est - 97490 Ste-Clotilde",tel:'0262 28 23 85',mail:'ce.9740591Z@ac-reunion.fr'},
+  ],
+  'DOMENJOD':[
+    {label:'Él. Domenjod (Ficus)',nom:'Domenjod (Ficus)',adresse:'45, route de Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 70',mail:'ce.9740211L@ac-reunion.fr'},
+    {label:'Él. Domenjod annexe',nom:'Domenjod annexe',adresse:'chemin du case - Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 44',mail:''},
+    {label:'Mat. Cocotiers',nom:'Cocotiers',adresse:'chemin du case - Domenjod - 97490 Ste-Clotilde',tel:'0262 53 53 87',mail:''},
+  ],
+  'MONTAGNE 15ÈME':[
+    {label:'Él. Saint-Bernard 15ème',nom:'Saint-Bernard 15ème',adresse:'69, rue du Père Raimbault - 97417 La Montagne',tel:'0262 23 61 13',mail:'ce.9740133B@ac-reunion.fr'},
+    {label:'Prim. Les Affouches',nom:'Les Affouches',adresse:'52, route Antide Boyer - 97417 La Montagne',tel:'0262 23 62 14',mail:'ce.9740124S@ac-reunion.fr'},
+    {label:'Mat. Saint Bernard 15ème',nom:'Saint Bernard 15ème',adresse:'61, Rue du Père Raimbault - 97417 La Montagne',tel:'0262 23 62 44',mail:'ce.9740665E@ac-reunion.fr'},
+  ],
+  'MONTAGNE 8ÈME':[
+    {label:'Él. Philippe Vinson',nom:'Philippe Vinson',adresse:'34, route des Palmiers - 97417 La Montagne',tel:'0262 23 63 07',mail:'ce.9740237P@ac-reunion.fr'},
+    {label:'Él. Gérard Lauret',nom:'Gérard Lauret',adresse:'3, chemin Manès Charles Olivier - 97417 La Montagne',tel:'0262 23 60 14',mail:'ce.9740242V@ac-reunion.fr'},
+    {label:'Mat. Ruisseau Blanc',nom:'Ruisseau Blanc',adresse:'1 chemin des Fucréas - 97417 La Montagne',tel:'0262 23 62 45',mail:'ce.9740773X@ac-reunion.fr'},
+    {label:'Mat. Philippe Vinson 8ème',nom:'Philippe Vinson 8ème',adresse:'5 bis, chemin Bailly - 97417 La Montagne',tel:'0262 23 61 93',mail:'ce.9740795W@ac-reunion.fr'},
+  ],
+  'MONTGAILLARD':[
+    {label:'Él. Candide Azéma A',nom:'Candide Azéma A',adresse:'99, Rue Victor Hugo - 97400 Saint-Denis',tel:'0262 30 35 25',mail:'ce.9740244X@ac-reunion.fr'},
+    {label:'Él. Candide Azéma B',nom:'Candide Azéma B',adresse:'28, Bd de la Trinité - 97400 Saint-Denis',tel:'0262 56 34 81',mail:'ce.9740136E@ac-reunion.fr'},
+    {label:'Mat. La Providence',nom:'La Providence',adresse:'33 bis, Bd de la Providence - 97400 Saint-Denis',tel:'0262 30 63 62',mail:'ce.9740997R@ac-reunion.fr'},
+    {label:'Mat. Montgaillard',nom:'Montgaillard',adresse:'43, rue du Stade - Montgaillard - 97400 Saint-Denis',tel:'0262 30 11 26',mail:'ce.9740865X@ac-reunion.fr'},
+    {label:'Él. Henry Dunant',nom:'Henry Dunant',adresse:'99, Bd de la Trinité - 97400 Saint-Denis',tel:'0262 30 06 43',mail:'ce.9740122P@ac-reunion.fr'},
+    {label:'Mat. Françoise Mollard',nom:'Françoise Mollard',adresse:"56, Allée de la Maternelle - 97400 Saint-Denis",tel:'0262 30 24 11',mail:'ce.9740607S@ac-reunion.fr'},
+    {label:'Prim. La Chaumière',nom:'La Chaumière',adresse:'2, rue de la Chaumière - 97400 Saint-Denis',tel:'0262 30 34 52',mail:'ce.9741267J@ac-reunion.fr'},
+  ],
+  'MOUFIA':[
+    {label:'Él. Les Bancouliers',nom:'Les Bancouliers',adresse:'6, allée des Kentias - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 00 98',mail:'ce.9740210K@ac-reunion.fr'},
+    {label:'Mat. Les Bancouliers',nom:'Les Bancouliers',adresse:'8, allée des Kentias - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 12 56',mail:'ce.9740713G@ac-reunion.fr'},
+    {label:'Prim. Les Eglantines',nom:'Les Eglantines',adresse:'13, rue de la Chapelle - 97490 Ste-Clotilde',tel:'0262 29 71 04',mail:'ce.9740995N@ac-reunion.fr'},
+    {label:'Él. Alain Lorraine',nom:'Alain Lorraine',adresse:'91, Allée des Tulipes - 97490 Ste-Clotilde',tel:'0262 29 02 29',mail:'ce.9740926N@ac-reunion.fr'},
+    {label:'Mat. Les Tulipiers',nom:'Les Tulipiers',adresse:'89, Allée des Tulipes - Le Moufia - 97490 Ste-Clotilde',tel:'0262 28 68 16',mail:'ce.9740901L@ac-reunion.fr'},
+    {label:'Él. Les Badamiers',nom:'Les Badamiers',adresse:'67, rue du Père Lafosse - 97490 Ste-Clotilde',tel:'0262 28 28 54',mail:'ce.9740745S@ac-reunion.fr'},
+    {label:'Mat. Les Badamiers',nom:'Les Badamiers',adresse:'28C route du Moufia - 97490 Ste-Clotilde',tel:'0262 28 29 42',mail:'ce.9740709C@ac-reunion.fr'},
+    {label:'Prim. Les Baies Roses',nom:'Les Baies Roses',adresse:'7 rue Pierre de Coubertin - Le Moufia - 97490 Ste-Clotilde',tel:'0262 29 44 72',mail:'ce.9741203P@ac-reunion.fr'},
+  ],
+  'RIVIÈRE / PETITE ÎLE':[
+    {label:'Él. Jules Reydellet A',nom:'Jules Reydellet A',adresse:'94, rue de la République - 97400 Saint-Denis',tel:'0262 21 49 36',mail:'ce.9741252T@ac-reunion.fr'},
+    {label:'Él. Jules Reydellet B',nom:'Jules Reydellet B',adresse:'101, rue de la République - 97400 Saint-Denis',tel:'0262 21 32 62',mail:'ce.9741252T@ac-reunion.fr'},
+    {label:'Mat. Petite Île',nom:'Petite Île',adresse:'94, rue de la République - 97400 Saint-Denis',tel:'0262 41 19 80',mail:'ce.9740684A@ac-reunion.fr'},
+    {label:'Mat. Ylang Ylang',nom:'Ylang Ylang',adresse:'15, rue de la Digue - 97400 Saint-Denis',tel:'0262 21 94 09',mail:'ce.9740744R@ac-reunion.fr'},
+    {label:'Mat. Rivière II',nom:'Rivière II',adresse:'43 Bis, Quai Est rue de la République - 97400 Saint-Denis',tel:'0262 21 08 96',mail:'ce.9740940D@ac-reunion.fr'},
+  ],
+  'SAINT FRANÇOIS':[
+    {label:'Él. Saint-François PK7',nom:'Saint-François PK7',adresse:"10, Allée des Ecoles - 97400 Saint Denis",tel:'0262 30 09 71',mail:'ce.9740127V@ac-reunion.fr'},
+    {label:'Mat. Saint-François PK7',nom:'Saint-François PK7',adresse:'137, route de Saint François - 97400 Saint-Denis',tel:'0262 30 09 33',mail:'ce.9740628P@ac-reunion.fr'},
+  ],
+  'SAINTE CLOTILDE':[
+    {label:'Él. Les Tamarins',nom:'Les Tamarins',adresse:'109, rue Lory les Hauts - 97490 Ste-Clotilde',tel:'0262 28 14 19',mail:'ce.9740772W@ac-reunion.fr'},
+    {label:'Mat. Les Tamarins',nom:'Les Tamarins',adresse:'78, rue Lacroix - 97490 Ste-Clotilde',tel:'0262 28 21 52',mail:'ce.9740743P@ac-reunion.fr'},
+    {label:'Prim. Jean-Baptiste Bossard',nom:'Jean-Baptiste Bossard',adresse:'7, rue Lacroix - 97490 Ste-Clotilde',tel:'0262 28 21 40',mail:'ce.9740667G@ac-reunion.fr'},
+    {label:'Él. Lilas',nom:'Lilas',adresse:'4, rue de la Cure - 97490 Ste-Clotilde',tel:'0262 28 00 96',mail:'ce.9741259A@ac-reunion.fr'},
+    {label:'Mat. Les Jacarandas',nom:'Les Jacarandas',adresse:'2, rue de la Cure - 97490 Ste-Clotilde',tel:'0262 28 07 58',mail:'ce.9740708B@ac-reunion.fr'},
+    {label:'Mat. Claude Debussy',nom:'Claude Debussy',adresse:'16, rue Frédéric Chopin - 97490 Ste-Clotilde',tel:'0262 29 70 72',mail:'ce.9740662B@ac-reunion.fr'},
+    {label:'Él. Champ Fleuri',nom:'Champ Fleuri',adresse:'46, ruelle Magnan - 97490 Ste-Clotilde',tel:'0262 21 34 87',mail:'ce.9740206F@ac-reunion.fr'},
+    {label:'Mat. Champ Fleuri',nom:'Champ Fleuri',adresse:'19 Ruelle Magnan - 97490 Ste-Clotilde',tel:'0262 21 34 86',mail:'ce.9740823B@ac-reunion.fr'},
+  ],
+  'SOURCE':[
+    {label:'Él. Gabriel Macé',nom:'Gabriel Macé',adresse:'3A, Rue de la Source - 97400 Saint-Denis',tel:'0262 21 22 95',mail:'ce.9741074Z@ac-reunion.fr'},
+    {label:'Prim. Raymond Mondon',nom:'Raymond Mondon',adresse:'2, Rue Nicole de la Serve - 97400 Saint-Denis',tel:'0262 21 17 56',mail:'ce.9740236N@ac-reunion.fr'},
+    {label:'Él. Les Camélias',nom:'Les Camélias',adresse:"5, Rue Nicole de la Serve - 97400 Saint-Denis",tel:'0262 21 18 20',mail:'ce.9740245Y@ac-reunion.fr'},
+  ],
 };
 
 const TYPES_PAR_CELLULE={
@@ -317,7 +411,31 @@ function majEcoles(){
   const s=document.getElementById('secteur').value;
   const el=document.getElementById('ecole');
   el.innerHTML='<option value="">-- Sélectionner une école --</option>';
-  if(s&&ECOLES[s]) ECOLES[s].forEach(e=>{const o=document.createElement('option');o.value=o.textContent=e;el.appendChild(o);});
+  document.getElementById('fiche-ecole').style.display='none';
+  if(s&&ECOLES_DATA[s]){
+    ECOLES_DATA[s].forEach((e,i)=>{
+      const o=document.createElement('option');
+      o.value=i;
+      o.textContent=e.label;
+      el.appendChild(o);
+    });
+  }
+  majProgression();
+}
+
+function majFicheEcole(){
+  const s=document.getElementById('secteur').value;
+  const idx=document.getElementById('ecole').value;
+  const fiche=document.getElementById('fiche-ecole');
+  if(s&&idx!==''&&ECOLES_DATA[s]){
+    const e=ECOLES_DATA[s][parseInt(idx)];
+    document.getElementById('fiche-adresse').textContent=e.adresse||'—';
+    document.getElementById('fiche-tel').textContent=e.tel||'—';
+    document.getElementById('fiche-mail').textContent=e.mail||'—';
+    fiche.style.display='block';
+  } else {
+    fiche.style.display='none';
+  }
   majProgression();
 }
 
@@ -361,6 +479,9 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
   document.getElementById('error-msg').style.display='none';
 
   const cellule=document.querySelector('input[name=cellule]:checked')?.value||'';
+  const secteur=document.getElementById('secteur').value;
+  const ecoleIdx=document.getElementById('ecole').value;
+  const ecoleData=(secteur&&ecoleIdx!==''&&ECOLES_DATA[secteur])?ECOLES_DATA[secteur][parseInt(ecoleIdx)]:null;
 
   let photosData=null;
   const photoInput=document.getElementById('photoInput');
@@ -377,8 +498,8 @@ document.getElementById('mainForm').addEventListener('submit',async(e)=>{
     demandeur_role:document.getElementById('dem_role').value,
     demandeur_email:document.getElementById('dem_email').value,
     demandeur_tel:document.getElementById('dem_tel').value||null,
-    secteur:document.getElementById('secteur').value,
-    ecole:document.getElementById('ecole').value,
+    secteur:secteur,
+    ecole:ecoleData?.nom||'',
     localisation:document.getElementById('localisation').value||null,
     cellule:cellule,
     type_travaux:document.getElementById('type_travaux').value,
@@ -420,6 +541,6 @@ function resetForm(){
   document.querySelectorAll('.prog-step').forEach(s=>s.classList.remove('done'));
 }
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.4 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.5 — 17/03/2026</div>
 </body>
 </html>
