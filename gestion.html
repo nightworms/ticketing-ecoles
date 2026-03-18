@@ -862,7 +862,7 @@ function showTab(t){
 // ─── DATA ─────────────────────────────────────────────────────
 async function chargerTickets(){
   try{
-    let url=`${SUPABASE_URL}/rest/v1/tickets?select=*&order=created_at.desc`;
+    let url=`${SUPABASE_URL}/rest/v1/tickets?select=id,created_at,updated_at,ecole,secteur,cellule,type_travaux,description,priorite,statut,demandeur_nom,demandeur_email,demandeur_tel,demandeur_role,localisation,assignee,commentaires,updated_by,date_souhaitee,token_cloture&order=created_at.desc`;
     // Filtre par cellule pour les référents
     if(currentUser?.role==='referent'&&currentUser.cellule){
       url+=`&cellule=eq.${encodeURIComponent(currentUser.cellule)}`;
@@ -995,7 +995,7 @@ function renderTable(){
     const peutRelancer=!['resolu','annule'].includes(t.statut)&&calcDelaiJours(t.created_at)>3&&(currentUser?.role==='secretaire'||currentUser?.role==='direction');
     return `<tr class="${t.priorite==='urgente'?'urgente':isNew?'is-new':''}">
       <td><div class="ticket-id">${t.id.slice(0,8).toUpperCase()}</div></td>
-      <td><div class="ticket-ecole">${isNew?'<span class="new-dot"></span>':''}${t.photos?'📷 ':''}${t.ecole||'–'}</div><div class="ticket-secteur">${t.secteur||''}</div></td>
+      <td><div class="ticket-ecole">${isNew?'<span class="new-dot"></span>':''}${t.ecole||'–'}</div><div class="ticket-secteur">${t.secteur||''}</div></td>
       <td><span class="cellule-tag">${t.cellule||'–'}</span></td>
       <td><div class="ticket-desc" title="${(t.description||'').replace(/"/g,'&quot;')}">${t.type_travaux?'<span style="font-size:11px;color:var(--bleu);display:block;">'+t.type_travaux+'</span>':''}${t.description||'–'}</div></td>
       <td>${prioriteBadge(t.priorite)}</td>
@@ -1050,8 +1050,24 @@ function ouvrirModal(id){
   if(t.commentaires&&!t.commentaires.includes('[')){document.getElementById('mObs').textContent=t.commentaires;ob.style.display='block';}else ob.style.display='none';
 
   // Photos
+  // Photos — chargement différé à l'ouverture du modal
   const pb=document.getElementById('mPhotosBlock');
-  if(t.photos){try{const ps=JSON.parse(t.photos);document.getElementById('mPhotos').innerHTML=ps.map(p=>`<img src="data:image/jpeg;base64,${p.data}" onclick="openLightbox(this.src)">`).join('');pb.style.display='block';}catch(e){pb.style.display='none';}}else pb.style.display='none';
+  pb.style.display='none';
+  document.getElementById('mPhotos').innerHTML='<div style="font-size:13px;color:var(--gris);padding:8px;">Chargement des photos…</div>';
+  fetch(`${SUPABASE_URL}/rest/v1/tickets?select=photos&id=eq.${id}`,{
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+  }).then(r=>r.json()).then(data=>{
+    const photos=data[0]?.photos;
+    if(photos){
+      try{
+        const ps=JSON.parse(photos);
+        if(ps.length>0){
+          document.getElementById('mPhotos').innerHTML=ps.map(p=>`<img src="data:image/jpeg;base64,${p.data}" onclick="openLightbox(this.src)">`).join('');
+          pb.style.display='block';
+        }
+      }catch(e){ pb.style.display='none'; }
+    }
+  }).catch(()=>{ pb.style.display='none'; });
 
   // Historique
   const notes=parseNotes(t.commentaires);
@@ -1382,6 +1398,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.7 — 18/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.8 — 18/03/2026</div>
 </body>
 </html>
