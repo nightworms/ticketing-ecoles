@@ -10,18 +10,184 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--texte);min-height:100vh;display:flex;flex-direction:column;}
 
-  /* LOGIN *
-  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1B3F6E 0%,#2E5FA3 100%);}
-  .login-card{background:white;border-radius:16px;padding:40px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
-  .login-logo{font-size:40px;margin-bottom:16px;}
-  .login-card h1{font-family:'DM Serif Display',serif;font-size:22px;color:var(--bleu);margin-bottom:4px;font-weight:400;}
-  .login-sub{font-size:13px;color:var(--gris);margin-bottom:6px;}
-  .login-cellule-badge{display:inline-block;background:var(--bleu-pale);color:var(--bleu);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:24px;}
-  .login-card input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;}
-  .login-card input:focus{outline:none;border-color:var(--bleu-clair);}
-  .login-btn{width:100%;padding:13px;background:var(--bleu);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
-  .login-btn:hover{background:var(--bleu-clair);}
-  .login-error{color:var(--rouge);font-size:13px;margin-top:10px;display:none;}
+  /* ═══════════════════════════════════════════
+     LOGIN — Page d'accueil premium
+  ═══════════════════════════════════════════ */
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  #login-screen{
+    display:flex;min-height:100vh;overflow:hidden;
+    background:#0B1929;
+  }
+
+  /* Panneau gauche — visuel */
+  .login-left{
+    flex:1;position:relative;display:flex;flex-direction:column;
+    justify-content:space-between;padding:48px;
+    background:linear-gradient(160deg,#0B1929 0%,#0F2744 40%,#1B3F6E 100%);
+    overflow:hidden;
+  }
+  .login-left::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(46,95,163,0.35) 0%,transparent 70%);
+  }
+  /* Grille décorative */
+  .login-grid{
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+    background-size:48px 48px;
+  }
+  /* Cercles décoratifs */
+  .login-circle-1{
+    position:absolute;width:400px;height:400px;border-radius:50%;
+    border:1px solid rgba(46,95,163,0.2);
+    top:-100px;right:-100px;
+  }
+  .login-circle-2{
+    position:absolute;width:280px;height:280px;border-radius:50%;
+    border:1px solid rgba(46,95,163,0.15);
+    bottom:60px;left:-60px;
+  }
+  .login-circle-3{
+    position:absolute;width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle,rgba(46,95,163,0.18) 0%,transparent 70%);
+    bottom:80px;right:80px;
+  }
+
+  /* Logo et marque */
+  .login-brand{position:relative;z-index:2;}
+  .login-brand-logo{
+    width:52px;height:52px;border-radius:14px;
+    background:linear-gradient(135deg,#2E5FA3,#1B3F6E);
+    border:1px solid rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;margin-bottom:20px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  }
+  .login-brand h2{
+    font-family:'Playfair Display',serif;
+    font-size:28px;color:white;font-weight:600;
+    line-height:1.2;margin-bottom:10px;
+    letter-spacing:-0.3px;
+  }
+  .login-brand h2 span{color:rgba(255,255,255,0.45);}
+  .login-brand p{
+    font-size:13px;color:rgba(255,255,255,0.45);
+    line-height:1.6;max-width:300px;
+  }
+
+  /* Stats decoratives */
+  .login-stats{
+    position:relative;z-index:2;
+    display:flex;gap:32px;
+  }
+  .login-stat{border-left:2px solid rgba(255,255,255,0.12);padding-left:16px;}
+  .login-stat-num{font-family:'Playfair Display',serif;font-size:26px;color:white;font-weight:600;}
+  .login-stat-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;text-transform:uppercase;letter-spacing:.08em;}
+
+  /* Panneau droit — formulaire */
+  .login-right{
+    width:440px;flex-shrink:0;
+    background:#F8FAFC;
+    display:flex;align-items:center;justify-content:center;
+    padding:48px 40px;
+    position:relative;
+  }
+  .login-right::before{
+    content:'';position:absolute;left:0;top:0;bottom:0;width:1px;
+    background:linear-gradient(to bottom,transparent,rgba(203,213,225,0.6) 20%,rgba(203,213,225,0.6) 80%,transparent);
+  }
+
+  .login-form-wrap{width:100%;max-width:320px;}
+
+  /* Entête formulaire */
+  .login-form-header{margin-bottom:36px;}
+  .login-form-header .login-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#EBF0F8;color:#1B3F6E;
+    font-size:11px;font-weight:600;
+    padding:5px 12px;border-radius:20px;
+    margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em;
+  }
+  .login-form-header h1{
+    font-family:'Playfair Display',serif;
+    font-size:26px;color:#0B1929;
+    font-weight:600;line-height:1.2;margin-bottom:8px;
+  }
+  .login-form-header p{font-size:13px;color:var(--gris);line-height:1.6;}
+
+  /* Champs */
+  .login-field{margin-bottom:16px;}
+  .login-field label{
+    display:block;font-size:12px;font-weight:600;
+    color:#475569;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em;
+  }
+  .login-field-wrap{position:relative;}
+  .login-field-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    font-size:15px;pointer-events:none;opacity:.5;
+  }
+  .login-field input{
+    width:100%;padding:12px 14px 12px 40px;
+    border:1.5px solid #E2E8F0;border-radius:10px;
+    font-family:'DM Sans',sans-serif;font-size:14px;color:#0B1929;
+    background:white;transition:border-color .15s,box-shadow .15s;
+    outline:none;
+  }
+  .login-field input:focus{
+    border-color:#1B3F6E;
+    box-shadow:0 0 0 3px rgba(27,63,110,0.08);
+  }
+  .login-field input::placeholder{color:#94A3B8;}
+
+  /* Aperçu cellule */
+  .login-cellule-badge{
+    display:none;background:var(--bleu-pale);color:var(--bleu);
+    font-size:12px;font-weight:600;padding:6px 14px;
+    border-radius:8px;margin-bottom:16px;
+    border:1px solid rgba(27,63,110,0.12);
+    text-align:center;
+  }
+
+  /* Bouton */
+  .login-btn{
+    width:100%;padding:14px;margin-top:8px;
+    background:#1B3F6E;color:white;border:none;
+    border-radius:10px;font-family:'DM Sans',sans-serif;
+    font-size:14px;font-weight:600;cursor:pointer;
+    transition:background .15s,transform .1s,box-shadow .15s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    letter-spacing:.02em;
+    box-shadow:0 4px 16px rgba(27,63,110,0.25);
+  }
+  .login-btn:hover{background:#2E5FA3;box-shadow:0 6px 20px rgba(27,63,110,0.35);transform:translateY(-1px);}
+  .login-btn:active{transform:translateY(0);}
+
+  /* Erreur */
+  .login-error{
+    display:none;margin-top:14px;padding:10px 14px;
+    background:#FEE2E2;border:1px solid #F5B7B1;
+    border-radius:8px;font-size:13px;color:#C0392B;text-align:center;
+  }
+
+  /* Footer login */
+  .login-footer{
+    margin-top:36px;padding-top:24px;
+    border-top:1px solid #E2E8F0;
+    font-size:11px;color:#94A3B8;text-align:center;line-height:1.6;
+  }
+
+  /* Animation entrée */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .login-form-wrap{animation:fadeUp .5s ease both;}
+  .login-brand{animation:fadeUp .6s .1s ease both;opacity:0;}
+  .login-stats{animation:fadeUp .6s .2s ease both;opacity:0;}
+
+  /* Responsive — mobile */
+  @media(max-width:700px){
+    .login-left{display:none;}
+    .login-right{width:100%;padding:32px 24px;}
+  }
 
   /* APP */
   #app{display:none;flex-direction:column;min-height:100vh;}
@@ -206,17 +372,93 @@
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">🏛️</div>
-    <h1>Espace gestion</h1>
-    <p class="login-sub">Pôle Technique — Direction de l'Éducation</p>
-    <div class="login-cellule-badge" id="loginCelluleBadge" style="display:none"></div>
-    <input type="text" id="login-user" placeholder="Identifiant" autocomplete="username" oninput="previewCellule()">
-    <input type="password" id="login-pass" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Connexion</button>
-    <div class="login-error" id="login-error">Identifiant ou mot de passe incorrect.</div>
+
+  <!-- Panneau gauche : identité visuelle -->
+  <div class="login-left">
+    <div class="login-grid"></div>
+    <div class="login-circle-1"></div>
+    <div class="login-circle-2"></div>
+    <div class="login-circle-3"></div>
+
+    <div class="login-brand">
+      <div class="login-brand-logo">🏫</div>
+      <h2>Maintenance<br><span>Scolaire</span></h2>
+      <p>Plateforme de gestion des signalements et interventions — Direction de l'Éducation, Ville de Saint-Denis de La Réunion.</p>
+    </div>
+
+    <div class="login-stats">
+      <div class="login-stat">
+        <div class="login-stat-num" id="ls-total">—</div>
+        <div class="login-stat-label">Tickets actifs</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-num" id="ls-urgent">—</div>
+        <div class="login-stat-label">Urgences</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-num">10</div>
+        <div class="login-stat-label">Cellules</div>
+      </div>
+    </div>
   </div>
+
+  <!-- Panneau droit : formulaire -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <div class="login-form-header">
+        <div class="login-badge">🔐 Accès sécurisé</div>
+        <h1>Espace de gestion</h1>
+        <p>Connectez-vous avec vos identifiants pour accéder au tableau de bord.</p>
+      </div>
+
+      <div class="login-cellule-badge" id="loginCelluleBadge"></div>
+
+      <div class="login-field">
+        <label>Identifiant</label>
+        <div class="login-field-wrap">
+          <span class="login-field-icon">👤</span>
+          <input type="text" id="login-user" placeholder="Votre identifiant" autocomplete="username" oninput="previewCellule()">
+        </div>
+      </div>
+
+      <div class="login-field">
+        <label>Mot de passe</label>
+        <div class="login-field-wrap">
+          <span class="login-field-icon">🔑</span>
+          <input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+      </div>
+
+      <button class="login-btn" onclick="doLogin()">
+        Connexion <span>→</span>
+      </button>
+
+      <div class="login-error" id="login-error">Identifiant ou mot de passe incorrect.</div>
+
+      <div class="login-footer">
+        Pôle Technique — Direction de l'Éducation<br>
+        Ville de Saint-Denis · La Réunion
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<script>
+// Charger les stats de la page login (tickets actifs + urgences)
+(async function(){
+  try{
+    const r = await fetch('https://clakdvjcytmtubenprux.supabase.co/rest/v1/tickets?select=statut,priorite&statut=not.in.(resolu,annule)',{
+      headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0'}
+    });
+    const d = await r.json();
+    if(Array.isArray(d)){
+      document.getElementById('ls-total').textContent = d.length;
+      document.getElementById('ls-urgent').textContent = d.filter(t=>t.priorite==='urgente').length;
+    }
+  }catch(e){}
+})();
+</script>
 
 <!-- APP -->
 <div id="app">
@@ -1140,6 +1382,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.6 — 17/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.7 — 18/03/2026</div>
 </body>
 </html>
