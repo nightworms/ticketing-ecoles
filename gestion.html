@@ -1326,13 +1326,12 @@ function chargerReferents(){
 
 function sauvegarderReferents(){
   const data = {};
-  CELLULES_LIST.forEach(cellule => {
-    const key = cellule.replace(/[^a-zA-Z0-9]/g,'_');
+  CELLULES_LIST.forEach((cellule, idx) => {
     data[cellule] = {
-      nom:      (document.getElementById(`ref_nom_${key}`)?.value||'').trim(),
-      email:    (document.getElementById(`ref_email_${key}`)?.value||'').trim(),
-      tel:      (document.getElementById(`ref_tel_${key}`)?.value||'').trim(),
-      fonction: (document.getElementById(`ref_fonction_${key}`)?.value||'').trim(),
+      nom:      (document.getElementById(`ref_nom_${idx}`)?.value||'').trim(),
+      email:    (document.getElementById(`ref_email_${idx}`)?.value||'').trim(),
+      tel:      (document.getElementById(`ref_tel_${idx}`)?.value||'').trim(),
+      fonction: (document.getElementById(`ref_fonction_${idx}`)?.value||'').trim(),
     };
     // Synchroniser avec COMPTES pour les relances EmailJS
     const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
@@ -1359,8 +1358,7 @@ function renderReferents(){
   });
   const grid = document.getElementById('referentsGrid');
   if(!grid) return;
-  grid.innerHTML = CELLULES_LIST.map(cellule => {
-    const key = cellule.replace(/[^a-zA-Z0-9]/g,'_');
+  grid.innerHTML = CELLULES_LIST.map((cellule, idx) => {
     const r = data[cellule] || {};
     const icon = CELLULE_ICONS[cellule] || '📋';
     return `
@@ -1372,19 +1370,19 @@ function renderReferents(){
       <div style="display:flex;flex-direction:column;gap:9px;">
         <div>
           <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Nom complet</label>
-          <input id="ref_nom_${key}" type="text" value="${r.nom||''}" placeholder="Prénom Nom" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+          <input id="ref_nom_${idx}" type="text" value="${r.nom||''}" placeholder="Prénom Nom" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
         </div>
         <div>
           <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Fonction</label>
-          <input id="ref_fonction_${key}" type="text" value="${r.fonction||''}" placeholder="Ex : Responsable DSB" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+          <input id="ref_fonction_${idx}" type="text" value="${r.fonction||''}" placeholder="Ex : Responsable DSB" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
         </div>
         <div>
           <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Email <span style="color:var(--rouge)">*</span> <span style="font-weight:400;color:var(--gris);font-size:11px;">(utilisé pour les relances)</span></label>
-          <input id="ref_email_${key}" type="email" value="${r.email||''}" placeholder="prenom.nom@mairie-saintdenis.fr" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;${r.email?'border-color:#9FD8CA;background:#F0FDF4;':''}">
+          <input id="ref_email_${idx}" type="email" value="${r.email||''}" placeholder="prenom.nom@mairie-saintdenis.fr" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;${r.email?'border-color:#9FD8CA;background:#F0FDF4;':''}">
         </div>
         <div>
           <label style="font-size:11px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Téléphone</label>
-          <input id="ref_tel_${key}" type="tel" value="${r.tel||''}" placeholder="0692 XX XX XX" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
+          <input id="ref_tel_${idx}" type="tel" value="${r.tel||''}" placeholder="0692 XX XX XX" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
         </div>
       </div>
       ${r.email ? `<div style="margin-top:10px;font-size:11px;color:var(--vert);display:flex;align-items:center;gap:4px;">✅ Email configuré — relances actives</div>` : `<div style="margin-top:10px;font-size:11px;color:var(--orange);display:flex;align-items:center;gap:4px;">⚠️ Email manquant — relances inactives</div>`}
@@ -1398,6 +1396,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.8 — 18/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.9 — 25/03/2026</div>
 </body>
 </html>
