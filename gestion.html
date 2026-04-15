@@ -10,186 +10,50 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--texte);min-height:100vh;display:flex;flex-direction:column;}
 
-  /* ═══════════════════════════════════════════
-     LOGIN — Page d'accueil premium
-  ═══════════════════════════════════════════ */
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-  #login-screen{
-    display:flex;min-height:100vh;overflow:hidden;
-    background:#0B1929;
-  }
-
-  /* Panneau gauche — visuel */
-  .login-left{
-    flex:1;position:relative;display:flex;flex-direction:column;
-    justify-content:space-between;padding:48px;
-    background:linear-gradient(160deg,#0B1929 0%,#0F2744 40%,#1B3F6E 100%);
-    overflow:hidden;
-  }
-  .login-left::before{
-    content:'';position:absolute;inset:0;
-    background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(46,95,163,0.35) 0%,transparent 70%);
-  }
-  /* Grille décorative */
-  .login-grid{
-    position:absolute;inset:0;
-    background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
-    background-size:48px 48px;
-  }
-  /* Cercles décoratifs */
-  .login-circle-1{
-    position:absolute;width:400px;height:400px;border-radius:50%;
-    border:1px solid rgba(46,95,163,0.2);
-    top:-100px;right:-100px;
-  }
-  .login-circle-2{
-    position:absolute;width:280px;height:280px;border-radius:50%;
-    border:1px solid rgba(46,95,163,0.15);
-    bottom:60px;left:-60px;
-  }
-  .login-circle-3{
-    position:absolute;width:160px;height:160px;border-radius:50%;
-    background:radial-gradient(circle,rgba(46,95,163,0.18) 0%,transparent 70%);
-    bottom:80px;right:80px;
-  }
-
-  /* Logo et marque */
+  #login-screen{display:flex;min-height:100vh;overflow:hidden;background:#0B1929;}
+  .login-left{flex:1;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:48px;background:linear-gradient(160deg,#0B1929 0%,#0F2744 40%,#1B3F6E 100%);overflow:hidden;}
+  .login-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(46,95,163,0.35) 0%,transparent 70%);}
+  .login-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:48px 48px;}
+  .login-circle-1{position:absolute;width:400px;height:400px;border-radius:50%;border:1px solid rgba(46,95,163,0.2);top:-100px;right:-100px;}
+  .login-circle-2{position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid rgba(46,95,163,0.15);bottom:60px;left:-60px;}
+  .login-circle-3{position:absolute;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(46,95,163,0.18) 0%,transparent 70%);bottom:80px;right:80px;}
   .login-brand{position:relative;z-index:2;}
-  .login-brand-logo{
-    width:52px;height:52px;border-radius:14px;
-    background:linear-gradient(135deg,#2E5FA3,#1B3F6E);
-    border:1px solid rgba(255,255,255,0.15);
-    display:flex;align-items:center;justify-content:center;
-    font-size:24px;margin-bottom:20px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.3);
-  }
-  .login-brand h2{
-    font-family:'Playfair Display',serif;
-    font-size:28px;color:white;font-weight:600;
-    line-height:1.2;margin-bottom:10px;
-    letter-spacing:-0.3px;
-  }
+  .login-brand-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2E5FA3,#1B3F6E);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+  .login-brand h2{font-family:'Playfair Display',serif;font-size:28px;color:white;font-weight:600;line-height:1.2;margin-bottom:10px;letter-spacing:-0.3px;}
   .login-brand h2 span{color:rgba(255,255,255,0.45);}
-  .login-brand p{
-    font-size:13px;color:rgba(255,255,255,0.45);
-    line-height:1.6;max-width:300px;
-  }
-
-  /* Stats decoratives */
-  .login-stats{
-    position:relative;z-index:2;
-    display:flex;gap:32px;
-  }
+  .login-brand p{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:300px;}
+  .login-stats{position:relative;z-index:2;display:flex;gap:32px;}
   .login-stat{border-left:2px solid rgba(255,255,255,0.12);padding-left:16px;}
   .login-stat-num{font-family:'Playfair Display',serif;font-size:26px;color:white;font-weight:600;}
   .login-stat-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;text-transform:uppercase;letter-spacing:.08em;}
-
-  /* Panneau droit — formulaire */
-  .login-right{
-    width:440px;flex-shrink:0;
-    background:#F8FAFC;
-    display:flex;align-items:center;justify-content:center;
-    padding:48px 40px;
-    position:relative;
-  }
-  .login-right::before{
-    content:'';position:absolute;left:0;top:0;bottom:0;width:1px;
-    background:linear-gradient(to bottom,transparent,rgba(203,213,225,0.6) 20%,rgba(203,213,225,0.6) 80%,transparent);
-  }
-
+  .login-right{width:440px;flex-shrink:0;background:#F8FAFC;display:flex;align-items:center;justify-content:center;padding:48px 40px;position:relative;}
+  .login-right::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(203,213,225,0.6) 20%,rgba(203,213,225,0.6) 80%,transparent);}
   .login-form-wrap{width:100%;max-width:320px;}
-
-  /* Entête formulaire */
   .login-form-header{margin-bottom:36px;}
-  .login-form-header .login-badge{
-    display:inline-flex;align-items:center;gap:6px;
-    background:#EBF0F8;color:#1B3F6E;
-    font-size:11px;font-weight:600;
-    padding:5px 12px;border-radius:20px;
-    margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em;
-  }
-  .login-form-header h1{
-    font-family:'Playfair Display',serif;
-    font-size:26px;color:#0B1929;
-    font-weight:600;line-height:1.2;margin-bottom:8px;
-  }
+  .login-form-header .login-badge{display:inline-flex;align-items:center;gap:6px;background:#EBF0F8;color:#1B3F6E;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em;}
+  .login-form-header h1{font-family:'Playfair Display',serif;font-size:26px;color:#0B1929;font-weight:600;line-height:1.2;margin-bottom:8px;}
   .login-form-header p{font-size:13px;color:var(--gris);line-height:1.6;}
-
-  /* Champs */
   .login-field{margin-bottom:16px;}
-  .login-field label{
-    display:block;font-size:12px;font-weight:600;
-    color:#475569;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em;
-  }
+  .login-field label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em;}
   .login-field-wrap{position:relative;}
-  .login-field-icon{
-    position:absolute;left:14px;top:50%;transform:translateY(-50%);
-    font-size:15px;pointer-events:none;opacity:.5;
-  }
-  .login-field input{
-    width:100%;padding:12px 14px 12px 40px;
-    border:1.5px solid #E2E8F0;border-radius:10px;
-    font-family:'DM Sans',sans-serif;font-size:14px;color:#0B1929;
-    background:white;transition:border-color .15s,box-shadow .15s;
-    outline:none;
-  }
-  .login-field input:focus{
-    border-color:#1B3F6E;
-    box-shadow:0 0 0 3px rgba(27,63,110,0.08);
-  }
+  .login-field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;opacity:.5;}
+  .login-field input{width:100%;padding:12px 14px 12px 40px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:#0B1929;background:white;transition:border-color .15s,box-shadow .15s;outline:none;}
+  .login-field input:focus{border-color:#1B3F6E;box-shadow:0 0 0 3px rgba(27,63,110,0.08);}
   .login-field input::placeholder{color:#94A3B8;}
-
-  /* Aperçu cellule */
-  .login-cellule-badge{
-    display:none;background:var(--bleu-pale);color:var(--bleu);
-    font-size:12px;font-weight:600;padding:6px 14px;
-    border-radius:8px;margin-bottom:16px;
-    border:1px solid rgba(27,63,110,0.12);
-    text-align:center;
-  }
-
-  /* Bouton */
-  .login-btn{
-    width:100%;padding:14px;margin-top:8px;
-    background:#1B3F6E;color:white;border:none;
-    border-radius:10px;font-family:'DM Sans',sans-serif;
-    font-size:14px;font-weight:600;cursor:pointer;
-    transition:background .15s,transform .1s,box-shadow .15s;
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    letter-spacing:.02em;
-    box-shadow:0 4px 16px rgba(27,63,110,0.25);
-  }
+  .login-cellule-badge{display:none;background:var(--bleu-pale);color:var(--bleu);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;margin-bottom:16px;border:1px solid rgba(27,63,110,0.12);text-align:center;}
+  .login-btn{width:100%;padding:14px;margin-top:8px;background:#1B3F6E;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s,box-shadow .15s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.02em;box-shadow:0 4px 16px rgba(27,63,110,0.25);}
   .login-btn:hover{background:#2E5FA3;box-shadow:0 6px 20px rgba(27,63,110,0.35);transform:translateY(-1px);}
   .login-btn:active{transform:translateY(0);}
-
-  /* Erreur */
-  .login-error{
-    display:none;margin-top:14px;padding:10px 14px;
-    background:#FEE2E2;border:1px solid #F5B7B1;
-    border-radius:8px;font-size:13px;color:#C0392B;text-align:center;
-  }
-
-  /* Footer login */
-  .login-footer{
-    margin-top:36px;padding-top:24px;
-    border-top:1px solid #E2E8F0;
-    font-size:11px;color:#94A3B8;text-align:center;line-height:1.6;
-  }
-
-  /* Animation entrée */
+  .login-error{display:none;margin-top:14px;padding:10px 14px;background:#FEE2E2;border:1px solid #F5B7B1;border-radius:8px;font-size:13px;color:#C0392B;text-align:center;}
+  .login-footer{margin-top:36px;padding-top:24px;border-top:1px solid #E2E8F0;font-size:11px;color:#94A3B8;text-align:center;line-height:1.6;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
   .login-form-wrap{animation:fadeUp .5s ease both;}
   .login-brand{animation:fadeUp .6s .1s ease both;opacity:0;}
   .login-stats{animation:fadeUp .6s .2s ease both;opacity:0;}
+  @media(max-width:700px){.login-left{display:none;}.login-right{width:100%;padding:32px 24px;}}
 
-  /* Responsive — mobile */
-  @media(max-width:700px){
-    .login-left{display:none;}
-    .login-right{width:100%;padding:32px 24px;}
-  }
-
-  /* APP */
   #app{display:none;flex-direction:column;min-height:100vh;}
   .topbar{background:var(--bleu);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
   .topbar-left{display:flex;align-items:center;gap:14px;}
@@ -206,7 +70,6 @@
   .btn-logout{background:none;color:rgba(255,255,255,0.5);border:none;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:6px;}
   .btn-logout:hover{color:white;}
 
-  /* TABS */
   .tabs{background:white;border-bottom:1px solid var(--border);display:flex;padding:0 24px;}
   .tab{padding:14px 18px;font-size:14px;font-weight:500;color:var(--gris);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;}
   .tab:hover{color:var(--texte);}
@@ -215,7 +78,6 @@
 
   .content{flex:1;padding:24px;max-width:1400px;width:100%;margin:0 auto;}
 
-  /* COMPTEURS */
   .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
   .stat-card{background:white;border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:box-shadow .15s,border-color .15s;}
   .stat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08);border-color:var(--bleu-clair);}
@@ -227,7 +89,6 @@
   .s-retard .stat-num{color:#DC2626;}
   .s-resolu .stat-num{color:var(--vert);}
 
-  /* FILTRES */
   .filters-bar{background:white;border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .filters-bar select,.filters-bar input[type=text]{padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--texte);background:var(--gris-pale);}
   .filters-bar input[type=text]{flex:1;min-width:180px;background:white;}
@@ -239,7 +100,6 @@
   .btn-reset{background:none;border:1px solid var(--border);color:var(--gris);padding:7px 12px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;}
   .btn-reset:hover{background:var(--gris-pale);}
 
-  /* BANNIÈRE SECRÉTAIRE — vue relance */
   .secretaire-banner{background:var(--violet-pale);border:1px solid #C4B5FD;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:none;}
   .secretaire-banner h3{font-size:14px;font-weight:600;color:var(--violet);margin-bottom:12px;}
   .relance-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
@@ -250,7 +110,6 @@
   .btn-relancer{background:var(--orange);color:white;border:none;padding:6px 12px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;margin-top:4px;}
   .btn-relancer:hover{background:#B35C08;}
 
-  /* TABLE */
   .table-card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
   .table-header-bar{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
   .table-header-bar h2{font-size:15px;font-weight:600;}
@@ -273,7 +132,6 @@
   .b-haute{background:var(--orange-pale);color:var(--orange);}
   .b-normale{background:var(--jaune-pale);color:var(--jaune);}
   .b-basse{background:var(--gris-pale);color:var(--gris);}
-  /* Statuts enrichis — 7 niveaux */
   .statut-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
   .s-nouveau{background:#DBEAFE;color:#1D4ED8;}
   .s-en_cours{background:#FEF3C7;color:#B45309;}
@@ -293,7 +151,6 @@
   .loading-row td,.empty-row td{text-align:center;padding:40px;color:var(--gris);}
   .new-dot{display:inline-block;width:7px;height:7px;background:#7C3AED;border-radius:50%;margin-right:5px;}
 
-  /* MODAL */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,60,0.45);z-index:200;align-items:center;justify-content:center;padding:20px;}
   .modal-overlay.open{display:flex;}
   .modal{background:white;border-radius:16px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.2);}
@@ -329,7 +186,6 @@
   .save-feedback.ok{color:var(--vert);}
   .save-feedback.err{color:var(--rouge);}
 
-  /* CONFIRM */
   .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,60,0.6);z-index:400;align-items:center;justify-content:center;}
   .confirm-overlay.open{display:flex;}
   .confirm-card{background:white;border-radius:14px;padding:28px;max-width:380px;width:90%;text-align:center;}
@@ -339,7 +195,6 @@
   .btn-cc{padding:10px 20px;border:1px solid var(--border);background:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;}
   .btn-co{padding:10px 20px;background:var(--rouge);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
 
-  /* STATS TAB */
   .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
   .chart-card{background:white;border:1px solid var(--border);border-radius:12px;padding:20px;}
   .chart-card h4{font-size:12px;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin-bottom:16px;}
@@ -351,14 +206,12 @@
   .bar-fill span{font-size:11px;font-weight:600;color:white;}
   .bar-val{font-size:12px;color:var(--gris);min-width:24px;}
 
-  /* TOAST */
   .toast{position:fixed;bottom:24px;right:24px;background:#1E293B;color:white;padding:14px 20px;border-radius:10px;font-size:14px;display:none;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,0.2);animation:slideIn .3s ease;}
   @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
   .toast.show{display:block;}
   .toast.success{background:var(--vert);}
   .toast.warning{background:var(--orange);}
 
-  /* LIGHTBOX */
   #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:600;align-items:center;justify-content:center;}
   #lightbox.open{display:flex;}
   #lightbox img{max-width:90vw;max-height:85vh;border-radius:8px;}
@@ -372,20 +225,16 @@
 
 <!-- LOGIN -->
 <div id="login-screen">
-
-  <!-- Panneau gauche : identité visuelle -->
   <div class="login-left">
     <div class="login-grid"></div>
     <div class="login-circle-1"></div>
     <div class="login-circle-2"></div>
     <div class="login-circle-3"></div>
-
     <div class="login-brand">
       <div class="login-brand-logo">🏫</div>
       <h2>Maintenance<br><span>Scolaire</span></h2>
       <p>Plateforme de gestion des signalements et interventions — Direction de l'Éducation, Ville de Saint-Denis de La Réunion.</p>
     </div>
-
     <div class="login-stats">
       <div class="login-stat">
         <div class="login-stat-num" id="ls-total">—</div>
@@ -402,7 +251,6 @@
     </div>
   </div>
 
-  <!-- Panneau droit : formulaire -->
   <div class="login-right">
     <div class="login-form-wrap">
       <div class="login-form-header">
@@ -410,9 +258,7 @@
         <h1>Espace de gestion</h1>
         <p>Connectez-vous avec vos identifiants pour accéder au tableau de bord.</p>
       </div>
-
       <div class="login-cellule-badge" id="loginCelluleBadge"></div>
-
       <div class="login-field">
         <label>Identifiant</label>
         <div class="login-field-wrap">
@@ -420,7 +266,6 @@
           <input type="text" id="login-user" placeholder="Votre identifiant" autocomplete="username" oninput="previewCellule()">
         </div>
       </div>
-
       <div class="login-field">
         <label>Mot de passe</label>
         <div class="login-field-wrap">
@@ -428,24 +273,14 @@
           <input type="password" id="login-pass" placeholder="••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
         </div>
       </div>
-
-      <button class="login-btn" onclick="doLogin()">
-        Connexion <span>→</span>
-      </button>
-
+      <button class="login-btn" onclick="doLogin()">Connexion <span>→</span></button>
       <div class="login-error" id="login-error">Identifiant ou mot de passe incorrect.</div>
-
-      <div class="login-footer">
-        Pôle Technique — Direction de l'Éducation<br>
-        Ville de Saint-Denis · La Réunion
-      </div>
+      <div class="login-footer">Pôle Technique — Direction de l'Éducation<br>Ville de Saint-Denis · La Réunion</div>
     </div>
   </div>
-
 </div>
 
 <script>
-// Charger les stats de la page login (tickets actifs + urgences)
 (async function(){
   try{
     const r = await fetch('https://clakdvjcytmtubenprux.supabase.co/rest/v1/tickets?select=statut,priorite&statut=not.in.(resolu,annule)',{
@@ -506,7 +341,6 @@
         <div class="filter-sep"></div>
         <select id="filterStatut" onchange="renderTable()">
           <option value="">Tous statuts</option>
-<option value="">Tous statuts</option>
           <option value="nouveau">🔵 Nouveau</option>
           <option value="en_cours">🟡 En cours</option>
           <option value="en_attente_pieces">🟣 En attente — Pièces</option>
@@ -586,7 +420,7 @@
       </div>
     </div>
 
-    <!-- TAB RELANCES (secrétaire uniquement) -->
+    <!-- TAB RELANCES -->
     <div id="tab-relance" style="display:none">
       <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
         <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">🔔 Tableau de bord des relances</h3>
@@ -604,7 +438,7 @@
         </table>
         </div>
       </div>
-    </div><!-- fin tab-relance -->
+    </div>
 
     <!-- TAB RÉFÉRENTS -->
     <div id="tab-referents" style="display:none">
@@ -614,15 +448,15 @@
             <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">👥 Gestion des référents par cellule</h3>
             <p style="font-size:13px;color:var(--gris);">Renseignez les coordonnées de la personne responsable de chaque cellule. Ces informations sont utilisées pour les relances automatiques.</p>
           </div>
-          <button onclick="sauvegarderReferents()" style="background:var(--vert);color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">💾 Tout enregistrer</button>
+          <button onclick="sauvegarderTousReferents()" style="background:var(--vert);color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">💾 Tout enregistrer</button>
         </div>
         <div id="referentsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;"></div>
         <div id="referentsFeedback" style="display:none;margin-top:14px;padding:10px 16px;border-radius:8px;font-size:13px;"></div>
       </div>
     </div>
 
-  </div><!-- fin .content -->
-</div><!-- fin .app -->
+  </div>
+</div>
 
 <!-- MODAL DÉTAIL -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
@@ -660,7 +494,6 @@
         <div id="mHistorique"></div>
       </div>
       <div class="modal-actions">
-        <!-- Réaffectation -->
         <div style="grid-column:1/-1;background:var(--bleu-pale);border-radius:10px;padding:12px 16px;margin-bottom:4px;">
           <div style="font-size:12px;font-weight:600;color:var(--bleu);margin-bottom:10px;">🔄 Réaffectation du ticket</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -694,7 +527,7 @@
                 <option>CHAUDRON</option><option>DOMENJOD</option>
                 <option>MONTAGNE 15ÈME</option><option>MONTAGNE 8ÈME</option>
                 <option>MONTGAILLARD</option><option>MOUFIA</option>
-                <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇOIS</option>
+                <option>RIVIÈRE / PETITE ÎLE</option><option>SAINT FRANÇAIS</option>
                 <option>SAINTE CLOTILDE</option><option>SOURCE</option>
               </select>
             </div>
@@ -706,7 +539,7 @@
         </div>
         <div><label>Statut</label>
           <select id="mStatut">
-<option value="nouveau">🔵 Nouveau</option>
+            <option value="nouveau">🔵 Nouveau</option>
             <option value="en_cours">🟡 En cours</option>
             <option value="en_attente_pieces">🟣 En attente — Pièces</option>
             <option value="en_attente_devis">🔴 En attente — Devis</option>
@@ -761,24 +594,21 @@
 const SUPABASE_URL='https://clakdvjcytmtubenprux.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsYWtkdmpjeXRtdHViZW5wcnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI2MTYsImV4cCI6MjA4ODkyODYxNn0.JAL-tGXPjQCE-FAB2lFI2OZ8-QTEK7RDgs-B5aLTS-0';
 
-// EmailJS — à configurer : remplacer par vos clés EmailJS
 const EMAILJS_SERVICE_ID='service_e5dm8b8';
 const EMAILJS_TEMPLATE_ID='template_43t771l';
 const EMAILJS_PUBLIC_KEY='n924SWS9vsFmHbS7W';
 
-// COMPTES : identifiant → { mdp, cellule, email, role }
-// role: 'referent' = voit seulement sa cellule | 'secretaire' = voit tout | 'direction' = voit tout
 const COMPTES={
   'admin':          {mdp:'education2024', cellule:null,                         email:'', role:'direction'},
   'secretaire':     {mdp:'secretaire2024',cellule:null,                         email:'secretaire@mairie-saintdenis.fr', role:'secretaire'},
   'restauration':   {mdp:'resto2024',     cellule:'Restauration scolaire',      email:'', role:'referent'},
   'informatique':   {mdp:'info2024',      cellule:'Informatique',               email:'', role:'referent'},
   'mobilier':       {mdp:'mobil2024',     cellule:'Mobilier',                   email:'', role:'referent'},
-  'ventilateur':    {mdp:'venti2024',     cellule:'Ventilateur / Brasseur d\'air',email:'', role:'referent'},
+  'ventilateur':    {mdp:'venti2024',     cellule:"Ventilateur / Brasseur d'air",email:'', role:'referent'},
   'couture':        {mdp:'couture2024',   cellule:'Couture / Textile — Rideau / Double des clés', email:'', role:'referent'},
   'dtp':            {mdp:'dtp2024',       cellule:'DTP',                        email:'', role:'referent'},
   'dsb':            {mdp:'dsb2024',       cellule:'DSB',                        email:'', role:'referent'},
-  'elagage':        {mdp:'elagage2024',   cellule:'Élagage et abattage d\'arbres',email:'', role:'referent'},
+  'elagage':        {mdp:'elagage2024',   cellule:"Élagage et abattage d'arbres",email:'', role:'referent'},
   'erp':            {mdp:'erp2024',       cellule:'ERP / Alarmes / Extincteurs',email:'', role:'referent'},
   'deratisation':   {mdp:'derat2024',     cellule:'Dératisation et traitement 3D',email:'', role:'referent'},
 };
@@ -809,11 +639,9 @@ function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     sessionStorage.setItem('auth',JSON.stringify({id:u,...compte}));
-    // Afficher cellule dans topbar
     document.getElementById('topCellule').textContent=
       compte.cellule ? compte.cellule :
       (compte.role==='secretaire'?'Secrétaire — Vue globale':'Direction');
-    // Onglet relance visible pour secrétaire/direction
     if(compte.role==='secretaire'||compte.role==='direction'){
       document.getElementById('tab-btn-relance').style.display='block';
       document.getElementById('tab-btn-referents').style.display='block';
@@ -828,7 +656,6 @@ function doLogin(){
 }
 function logout(){sessionStorage.removeItem('auth');location.reload();}
 
-// Auto-login si session active
 const saved=sessionStorage.getItem('auth');
 if(saved){
   try{
@@ -863,7 +690,6 @@ function showTab(t){
 async function chargerTickets(){
   try{
     let url=`${SUPABASE_URL}/rest/v1/tickets?select=id,created_at,updated_at,ecole,secteur,cellule,type_travaux,description,priorite,statut,demandeur_nom,demandeur_email,demandeur_tel,demandeur_role,localisation,assignee,commentaires,updated_by,date_souhaitee,token_cloture&order=created_at.desc`;
-    // Filtre par cellule pour les référents
     if(currentUser?.role==='referent'&&currentUser.cellule){
       url+=`&cellule=eq.${encodeURIComponent(currentUser.cellule)}`;
     }
@@ -874,7 +700,6 @@ async function chargerTickets(){
     allTickets=data;
     majStats();
     renderTable();
-    // Vérifier retards et envoyer alertes si nécessaire
     verifierRetards();
   }catch(e){console.error(e);}
 }
@@ -891,10 +716,8 @@ function majStats(){
   document.getElementById('statEncours').textContent=t.filter(x=>['en_cours','en_attente_pieces','en_attente_devis','rouvert'].includes(x.statut)).length;
   document.getElementById('statRetard').textContent=retard.length;
   document.getElementById('statResolu').textContent=resolus.length;
-  // Taux de résolution
   const taux=t.length>0?Math.round(resolus.length/t.length*100):0;
   document.getElementById('statTauxResolution').textContent=taux+'%';
-  // Délai moyen (tickets actifs uniquement)
   const actifs=t.filter(x=>!['resolu','annule'].includes(x.statut));
   const delaiMoyen=actifs.length>0?Math.round(actifs.reduce((s,x)=>s+calcDelaiJours(x.created_at),0)/actifs.length):0;
   document.getElementById('statDelaiMoyen').textContent=delaiMoyen+'j';
@@ -902,12 +725,10 @@ function majStats(){
   document.getElementById('countUrgent').textContent=urgents;
   document.getElementById('badgeNew').style.display=nouveaux>0?'block':'none';
   document.getElementById('countNew').textContent=nouveaux;
-  // Badge onglet relance
   const br=document.getElementById('badgeRelance');
   if(br) br.textContent=retard.length;
 }
 
-// ─── DÉLAI ────────────────────────────────────────────────────
 function calcDelaiJours(created_at){return Math.floor((Date.now()-new Date(created_at))/86400000);}
 function calcDelai(created_at,statut){
   if(['resolu','annule'].includes(statut)) return{txt:'Clôturé',cls:'ok'};
@@ -920,7 +741,6 @@ function calcDelai(created_at,statut){
   return{txt:d+' jours ⚠',cls:'late'};
 }
 
-// ─── FILTRES ─────────────────────────────────────────────────
 function filtrer(type,val){
   if(type==='prio') document.getElementById('filterPriorite').value=val;
   else document.getElementById('filterStatut').value=val;
@@ -928,7 +748,6 @@ function filtrer(type,val){
 }
 function filtrerRetard(){
   resetFiltres(false);
-  // On refiltre avec JS pour les tickets en retard
   window._filtreRetard=true;
   renderTable();
 }
@@ -941,14 +760,12 @@ function resetFiltres(clearRetard=true){
   renderTable();
 }
 
-// ─── TRI ──────────────────────────────────────────────────────
 function sortBy(col){
   if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
   else{sortCol=col;sortDir='asc';}
   renderTable();
 }
 
-// ─── TABLE ───────────────────────────────────────────────────
 function renderTable(){
   const search=document.getElementById('searchInput').value.toLowerCase();
   const fS=document.getElementById('filterStatut').value;
@@ -1013,22 +830,16 @@ function renderTable(){
 function prioriteBadge(p){const m={urgente:['🔴','b-urgente','Urgente'],haute:['🟠','b-haute','Haute'],normale:['🟡','b-normale','Normale'],basse:['⚫','b-basse','Basse']};const[i,c,l]=m[p]||['','b-basse',p||'–'];return`<span class="badge ${c}">${i} ${l}</span>`;}
 function statutBadge(s){
   const m={
-    'nouveau':       {icon:'🔵', label:'Nouveau'},
-    'en_cours':      {icon:'🟡', label:'En cours'},
-    'en_attente_pieces':{icon:'🟣', label:'Att. pièces'},
-    'en_attente_devis':  {icon:'🔴', label:'Att. devis'},
-    'planifie':      {icon:'🟢', label:'Planifié'},
-    'resolu':        {icon:'✅', label:'Résolu'},
-    'annule':        {icon:'⚫', label:'Annulé'},
-    'rouvert':       {icon:'🔄', label:'Rouvert'},
-    // Rétrocompatibilité ancien statut
-    'en_attente':    {icon:'🟡', label:'En attente'},
+    'nouveau':{icon:'🔵',label:'Nouveau'},'en_cours':{icon:'🟡',label:'En cours'},
+    'en_attente_pieces':{icon:'🟣',label:'Att. pièces'},'en_attente_devis':{icon:'🔴',label:'Att. devis'},
+    'planifie':{icon:'🟢',label:'Planifié'},'resolu':{icon:'✅',label:'Résolu'},
+    'annule':{icon:'⚫',label:'Annulé'},'rouvert':{icon:'🔄',label:'Rouvert'},
+    'en_attente':{icon:'🟡',label:'En attente'},
   };
   const d=m[s]||{icon:'❓',label:s};
   return`<span class="statut-badge s-${s}">${d.icon} ${d.label}</span>`;
 }
 
-// ─── MODAL ───────────────────────────────────────────────────
 function ouvrirModal(id){
   const t=allTickets.find(x=>x.id===id);if(!t)return;
   currentTicketId=id;
@@ -1049,8 +860,6 @@ function ouvrirModal(id){
   const ob=document.getElementById('mObsBlock');
   if(t.commentaires&&!t.commentaires.includes('[')){document.getElementById('mObs').textContent=t.commentaires;ob.style.display='block';}else ob.style.display='none';
 
-  // Photos
-  // Photos — chargement différé à l'ouverture du modal
   const pb=document.getElementById('mPhotosBlock');
   pb.style.display='none';
   document.getElementById('mPhotos').innerHTML='<div style="font-size:13px;color:var(--gris);padding:8px;">Chargement des photos…</div>';
@@ -1069,7 +878,6 @@ function ouvrirModal(id){
     }
   }).catch(()=>{ pb.style.display='none'; });
 
-  // Historique
   const notes=parseNotes(t.commentaires);
   document.getElementById('mHistorique').innerHTML=notes.length
     ?notes.map(n=>`<div class="note-item"><div class="note-date">${n.date}${n.user?' · '+n.user:''}</div>${n.text}</div>`).join('')
@@ -1080,7 +888,6 @@ function ouvrirModal(id){
   document.getElementById('mAssignee').value=t.assignee||'';
   document.getElementById('mDateIntervention').value='';
   document.getElementById('mNotes').value='';
-  // Pré-remplir les champs de réaffectation avec les valeurs actuelles
   document.getElementById('mCelluleEdit').value=t.cellule||'';
   document.getElementById('mEcoleEdit').value=t.ecole||'';
   document.getElementById('mSecteurEdit').value=t.secteur||'';
@@ -1100,7 +907,6 @@ async function sauvegarderTicket(){
   const fb=document.getElementById('saveFeedback');
   btn.disabled=true;btn.textContent='Enregistrement…';fb.style.display='none';
   const payload={statut:document.getElementById('mStatut').value,priorite:document.getElementById('mPrioriteEdit').value,assignee:document.getElementById('mAssignee').value||null,updated_at:new Date().toISOString(),updated_by:currentUser?.id||'admin'};
-  // Réaffectation — inclure seulement les champs modifiés
   const newCellule=document.getElementById('mCelluleEdit').value;
   const newEcole=document.getElementById('mEcoleEdit').value.trim();
   const newSecteur=document.getElementById('mSecteurEdit').value;
@@ -1110,7 +916,6 @@ async function sauvegarderTicket(){
   if(newEcole && newEcole!==t0?.ecole) payload.ecole=newEcole;
   if(newSecteur && newSecteur!==t0?.secteur) payload.secteur=newSecteur;
   if(newType!==undefined && newType!==t0?.type_travaux) payload.type_travaux=newType||null;
-  // Note automatique si réaffectation
   const changementsLog=[];
   if(payload.cellule) changementsLog.push(`Cellule → ${payload.cellule}`);
   if(payload.ecole) changementsLog.push(`École → ${payload.ecole}`);
@@ -1131,7 +936,6 @@ async function sauvegarderTicket(){
   }catch(e){fb.textContent='❌ Erreur';fb.className='save-feedback err';fb.style.display='block';btn.disabled=false;btn.textContent='Enregistrer les modifications';}
 }
 
-// ─── SUPPRESSION ─────────────────────────────────────────────
 function demanderSuppression(){document.getElementById('confirmOverlay').classList.add('open');}
 async function supprimerTicket(){
   document.getElementById('confirmOverlay').classList.remove('open');
@@ -1139,11 +943,9 @@ async function supprimerTicket(){
   try{await fetch(`${SUPABASE_URL}/rest/v1/tickets?id=eq.${currentTicketId}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});closeModal();await chargerTickets();showToast('Ticket supprimé','success');}catch(e){showToast('Erreur','error');}
 }
 
-// ─── RELANCES (secrétaire) ────────────────────────────────────
 function renderRelance(){
   const retard=allTickets.filter(t=>!['resolu','annule'].includes(t.statut)&&calcDelaiJours(t.created_at)>7);
   document.getElementById('retardCount').textContent=`${retard.length} ticket${retard.length>1?'s':''}`;
-  // Grouper par cellule
   const byCellule={};
   retard.forEach(t=>{const c=t.cellule||'Non assigné';byCellule[c]=(byCellule[c]||[]);byCellule[c].push(t);});
   document.getElementById('relanceGrid').innerHTML=Object.entries(byCellule).sort((a,b)=>b[1].length-a[1].length).map(([c,tickets])=>`
@@ -1153,7 +955,6 @@ function renderRelance(){
       <div class="rc-label">ticket${tickets.length>1?'s':''} en retard</div>
       <button class="btn-relancer" onclick="envoyerRelance('${c}',${tickets.length})">📬 Relancer</button>
     </div>`).join('');
-  // Table retard
   document.getElementById('retardBody').innerHTML=retard.map(t=>{
     const d=calcDelai(t.created_at,t.statut);
     return`<tr class="${t.priorite==='urgente'?'urgente':''}">
@@ -1170,73 +971,47 @@ function renderRelance(){
   }).join('');
 }
 
-// ─── EMAILJS ALERTES ─────────────────────────────────────────
 function _initEmailJS(){
-  if(EMAILJS_PUBLIC_KEY==='YOUR_PUBLIC_KEY'){
-    showToast('EmailJS non configuré.','warning');
-    return false;
-  }
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-  return true;
+  if(EMAILJS_PUBLIC_KEY==='YOUR_PUBLIC_KEY'){showToast('EmailJS non configuré.','warning');return false;}
+  emailjs.init(EMAILJS_PUBLIC_KEY);return true;
 }
 
-// Relance groupée par cellule (onglet Relances)
 function envoyerRelance(cellule, nb){
   const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
   const email=compte?.email;
-  if(!email){
-    showToast(`Aucun email configuré pour "${cellule}".`,'warning');
-    return;
-  }
+  if(!email){showToast(`Aucun email configuré pour "${cellule}".`,'warning');return;}
   if(!_initEmailJS()) return;
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
-    to_email: email,
-    cellule: cellule,
-    nb_retard: nb,
-    date: new Date().toLocaleDateString('fr-FR'),
-    lien_gestion: window.location.href
+    to_email: email,cellule: cellule,nb_retard: nb,
+    date: new Date().toLocaleDateString('fr-FR'),lien_gestion: window.location.href
   }).then(()=>showToast(`✅ Relance envoyée à ${email}`,'success'))
-    .catch(()=>showToast('Erreur lors de l\'envoi du mail','error'));
+    .catch(()=>showToast("Erreur lors de l'envoi du mail",'error'));
 }
 
-// Relance individuelle par ticket (bouton 📬 dans le tableau)
 function relancerTicket(ticketId, cellule, ecole){
-  const t=allTickets.find(x=>x.id===ticketId);
-  if(!t) return;
+  const t=allTickets.find(x=>x.id===ticketId);if(!t) return;
   const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
   const email=compte?.email;
-  if(!email){
-    showToast(`Aucun email configuré pour "${cellule}".`,'warning');
-    return;
-  }
+  if(!email){showToast(`Aucun email configuré pour "${cellule}".`,'warning');return;}
   if(!_initEmailJS()) return;
   const ref=t.id.slice(0,8).toUpperCase();
   const delai=calcDelaiJours(t.created_at);
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
-    to_email: email,
-    cellule: cellule,
-    nb_retard: 1,
-    date: new Date().toLocaleDateString('fr-FR'),
-    lien_gestion: window.location.href+'#'+ref,
-    ecole: ecole,
-    ref_ticket: ref,
-    description: t.description||'',
-    priorite: t.priorite||'',
-    nb_jours: delai
+    to_email: email,cellule: cellule,nb_retard: 1,
+    date: new Date().toLocaleDateString('fr-FR'),lien_gestion: window.location.href+'#'+ref,
+    ecole: ecole,ref_ticket: ref,description: t.description||'',
+    priorite: t.priorite||'',nb_jours: delai
   }).then(()=>showToast(`✅ Relance ticket ${ref} envoyée à ${email}`,'success'))
-    .catch(()=>showToast('Erreur lors de l\'envoi du mail','error'));
+    .catch(()=>showToast("Erreur lors de l'envoi du mail",'error'));
 }
 
 function verifierRetards(){
-  // Alerte auto si tickets urgents non traités depuis > 3 jours
   const urgentsRetard=allTickets.filter(t=>t.priorite==='urgente'&&!['resolu','annule'].includes(t.statut)&&calcDelaiJours(t.created_at)>3);
   if(urgentsRetard.length>0&&(currentUser?.role==='secretaire'||currentUser?.role==='direction')){
-    // Notification visuelle seulement (pas d'email auto pour éviter le spam)
     document.getElementById('badgeRelance').textContent=allTickets.filter(t=>!['resolu','annule'].includes(t.statut)&&calcDelaiJours(t.created_at)>7).length;
   }
 }
 
-// ─── EXPORT CSV ──────────────────────────────────────────────
 function exportCSV(){
   const cols=['id','created_at','ecole','secteur','cellule','type_travaux','priorite','statut','description','demandeur_nom','demandeur_email','assignee','updated_at'];
   const csv='\uFEFF'+[cols.join(';'),...allTickets.map(t=>cols.map(c=>`"${(t[c]||'').toString().replace(/"/g,'""')}"`).join(';'))].join('\n');
@@ -1245,35 +1020,29 @@ function exportCSV(){
   showToast(`Export CSV — ${allTickets.length} tickets`,'success');
 }
 
-// ─── STATS ───────────────────────────────────────────────────
 function renderStats(){
   const t=allTickets;
-  // Graphique statuts enrichis
   renderBarChart('chartStatut',[
-    {label:'🔵 Nouveau',       val:t.filter(x=>x.statut==='nouveau').length,           color:'#1D4ED8'},
-    {label:'🔄 Rouvert',       val:t.filter(x=>x.statut==='rouvert').length,           color:'#991B1B'},
-    {label:'🟡 En cours',      val:t.filter(x=>x.statut==='en_cours').length,          color:'#B45309'},
-    {label:'🟣 Att. pièces',   val:t.filter(x=>x.statut==='en_attente_pieces').length, color:'#7E22CE'},
-    {label:'🔴 Att. devis',    val:t.filter(x=>x.statut==='en_attente_devis').length,  color:'#BE185D'},
-    {label:'🟢 Planifié',      val:t.filter(x=>x.statut==='planifie').length,          color:'#065F46'},
-    {label:'✅ Résolu',         val:t.filter(x=>x.statut==='resolu').length,            color:'#166534'},
-    {label:'⚫ Annulé',         val:t.filter(x=>x.statut==='annule').length,            color:'#64748B'},
+    {label:'🔵 Nouveau',val:t.filter(x=>x.statut==='nouveau').length,color:'#1D4ED8'},
+    {label:'🔄 Rouvert',val:t.filter(x=>x.statut==='rouvert').length,color:'#991B1B'},
+    {label:'🟡 En cours',val:t.filter(x=>x.statut==='en_cours').length,color:'#B45309'},
+    {label:'🟣 Att. pièces',val:t.filter(x=>x.statut==='en_attente_pieces').length,color:'#7E22CE'},
+    {label:'🔴 Att. devis',val:t.filter(x=>x.statut==='en_attente_devis').length,color:'#BE185D'},
+    {label:'🟢 Planifié',val:t.filter(x=>x.statut==='planifie').length,color:'#065F46'},
+    {label:'✅ Résolu',val:t.filter(x=>x.statut==='resolu').length,color:'#166534'},
+    {label:'⚫ Annulé',val:t.filter(x=>x.statut==='annule').length,color:'#64748B'},
   ]);
-  // Priorités
   renderBarChart('chartPriorite',[
-    {label:'🔴 Urgente', val:t.filter(x=>x.priorite==='urgente').length, color:'#C0392B'},
-    {label:'🟠 Haute',   val:t.filter(x=>x.priorite==='haute').length,   color:'#D4700A'},
-    {label:'🟡 Normale', val:t.filter(x=>x.priorite==='normale').length, color:'#B7860A'},
-    {label:'⚫ Basse',   val:t.filter(x=>x.priorite==='basse').length,   color:'#64748B'},
+    {label:'🔴 Urgente',val:t.filter(x=>x.priorite==='urgente').length,color:'#C0392B'},
+    {label:'🟠 Haute',val:t.filter(x=>x.priorite==='haute').length,color:'#D4700A'},
+    {label:'🟡 Normale',val:t.filter(x=>x.priorite==='normale').length,color:'#B7860A'},
+    {label:'⚫ Basse',val:t.filter(x=>x.priorite==='basse').length,color:'#64748B'},
   ]);
-  // Par cellule
   const cc={};t.forEach(x=>{if(x.cellule)cc[x.cellule]=(cc[x.cellule]||0)+1;});
   renderBarChart('chartCellule',Object.entries(cc).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({label:l,val:v,color:'#5B21B6'})));
-  // Par secteur
   const sc={};t.forEach(x=>{if(x.secteur)sc[x.secteur]=(sc[x.secteur]||0)+1;});
   renderBarChart('chartSecteur',Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([l,v])=>({label:l,val:v,color:'#1A7A5E'})));
-  // Évolution mensuelle (créations + résolutions)
-  const mc={};const mr={};
+  const mc={};
   const ml={'01':'Jan','02':'Fév','03':'Mar','04':'Avr','05':'Mai','06':'Jun','07':'Jul','08':'Aoû','09':'Sep','10':'Oct','11':'Nov','12':'Déc'};
   t.forEach(x=>{
     const d=new Date(x.created_at);
@@ -1288,11 +1057,9 @@ function renderBarChart(id,data){
   el.innerHTML=data.filter(d=>d.val>=0).map(d=>`<div class="bar-row"><div class="bar-label">${d.label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(Math.round(d.val/max*100),d.val>0?4:0)}%;background:${d.color}"><span>${d.val>0?d.val:''}</span></div></div><div class="bar-val">${d.val}</div></div>`).join('');
 }
 
-
-
-// ─── RÉFÉRENTS ───────────────────────────────────────────────
-// Structure d'un référent : {nom, email, tel, fonction}
-// Stockage dans localStorage, clé 'referents_v1'
+// ─── RÉFÉRENTS — SUPABASE ─────────────────────────────────────
+// Stockage : table `referents` dans Supabase (colonne UNIQUE : cellule)
+// Exécuter migration_referents.sql dans Supabase avant utilisation
 
 const CELLULES_LIST = [
   'Restauration scolaire',
@@ -1320,44 +1087,116 @@ const CELLULE_ICONS = {
   'Dératisation et traitement 3D': '🐀',
 };
 
-function chargerReferents(){
-  try{ return JSON.parse(localStorage.getItem('referents_v1'))||{}; }catch(e){ return {}; }
+// Chargement depuis Supabase (async)
+async function chargerReferents() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/referents?select=cellule,nom,email,tel,fonction`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!res.ok) throw new Error('Erreur chargement référents');
+    const rows = await res.json();
+    // Convertir tableau → objet { cellule: {nom, email, tel, fonction} }
+    const data = {};
+    rows.forEach(r => {
+      data[r.cellule] = {
+        nom:      r.nom      || '',
+        email:    r.email    || '',
+        tel:      r.tel      || '',
+        fonction: r.fonction || ''
+      };
+    });
+    // Synchroniser les emails dans COMPTES pour les relances EmailJS
+    CELLULES_LIST.forEach(cellule => {
+      if (data[cellule]?.email) {
+        const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
+        if (compte) compte.email = data[cellule].email;
+      }
+    });
+    return data;
+  } catch(err) {
+    console.error('chargerReferents:', err);
+    showToast('Erreur chargement référents', 'warning');
+    return {};
+  }
 }
 
-function sauvegarderReferents(){
-  const data = {};
-  CELLULES_LIST.forEach((cellule, idx) => {
-    data[cellule] = {
-      nom:      (document.getElementById(`ref_nom_${idx}`)?.value||'').trim(),
-      email:    (document.getElementById(`ref_email_${idx}`)?.value||'').trim(),
-      tel:      (document.getElementById(`ref_tel_${idx}`)?.value||'').trim(),
-      fonction: (document.getElementById(`ref_fonction_${idx}`)?.value||'').trim(),
-    };
-    // Synchroniser avec COMPTES pour les relances EmailJS
-    const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
-    if(compte && data[cellule].email) compte.email = data[cellule].email;
-  });
-  localStorage.setItem('referents_v1', JSON.stringify(data));
-  const fb = document.getElementById('referentsFeedback');
-  fb.textContent = '✅ Référents enregistrés avec succès. Les relances utiliseront ces adresses email.';
-  fb.style.background = 'var(--vert-pale)';
-  fb.style.border = '1px solid #9FD8CA';
-  fb.style.color = '#2D6B57';
-  fb.style.display = 'block';
-  setTimeout(() => fb.style.display='none', 4000);
-}
-
-function renderReferents(){
-  const data = chargerReferents();
-  // Synchroniser les emails dans COMPTES au chargement
-  CELLULES_LIST.forEach(cellule => {
-    if(data[cellule]?.email){
+// Sauvegarde d'un seul référent via UPSERT Supabase
+async function sauvegarderReferent(cellule, nom, email, tel, fonction) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/referents`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({
+        cellule,
+        nom:      nom      || '',
+        email:    email    || '',
+        tel:      tel      || '',
+        fonction: fonction || '',
+        updated_at: new Date().toISOString()
+      })
+    });
+    if (!res.ok) throw new Error('Erreur sauvegarde référent');
+    // Synchroniser dans COMPTES pour les relances EmailJS immédiates
+    if (email) {
       const compte = Object.values(COMPTES).find(c => c.cellule === cellule);
-      if(compte) compte.email = data[cellule].email;
+      if (compte) compte.email = email;
     }
+    return true;
+  } catch(err) {
+    console.error('sauvegarderReferent:', err);
+    return false;
+  }
+}
+
+// Sauvegarde de tous les référents (bouton "Tout enregistrer")
+async function sauvegarderTousReferents() {
+  const btn = document.querySelector('button[onclick="sauvegarderTousReferents()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Enregistrement…'; }
+
+  const promesses = CELLULES_LIST.map((cellule, idx) => {
+    const nom      = document.getElementById(`ref_nom_${idx}`)?.value?.trim()      || '';
+    const email    = document.getElementById(`ref_email_${idx}`)?.value?.trim()    || '';
+    const tel      = document.getElementById(`ref_tel_${idx}`)?.value?.trim()      || '';
+    const fonction = document.getElementById(`ref_fonction_${idx}`)?.value?.trim() || '';
+    return sauvegarderReferent(cellule, nom, email, tel, fonction);
   });
+
+  const resultats = await Promise.all(promesses);
+  const ok = resultats.every(r => r === true);
+
+  const fb = document.getElementById('referentsFeedback');
+  if (ok) {
+    fb.textContent = '✅ Référents enregistrés avec succès dans Supabase. Les relances utiliseront ces adresses email.';
+    fb.style.background = 'var(--vert-pale)';
+    fb.style.border = '1px solid #9FD8CA';
+    fb.style.color = '#2D6B57';
+  } else {
+    fb.textContent = '⚠️ Certains référents n\'ont pas pu être enregistrés. Vérifiez votre connexion.';
+    fb.style.background = 'var(--orange-pale)';
+    fb.style.border = '1px solid #FCD34D';
+    fb.style.color = '#B45309';
+  }
+  fb.style.display = 'block';
+  setTimeout(() => fb.style.display = 'none', 5000);
+
+  if (btn) { btn.disabled = false; btn.textContent = '💾 Tout enregistrer'; }
+}
+
+// Rendu de l'onglet référents (chargement async depuis Supabase)
+async function renderReferents() {
   const grid = document.getElementById('referentsGrid');
-  if(!grid) return;
+  if (!grid) return;
+
+  // Afficher un état de chargement
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gris);">⏳ Chargement des référents…</div>';
+
+  const data = await chargerReferents();
+
   grid.innerHTML = CELLULES_LIST.map((cellule, idx) => {
     const r = data[cellule] || {};
     const icon = CELLULE_ICONS[cellule] || '📋';
@@ -1385,7 +1224,10 @@ function renderReferents(){
           <input id="ref_tel_${idx}" type="tel" value="${r.tel||''}" placeholder="0692 XX XX XX" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;">
         </div>
       </div>
-      ${r.email ? `<div style="margin-top:10px;font-size:11px;color:var(--vert);display:flex;align-items:center;gap:4px;">✅ Email configuré — relances actives</div>` : `<div style="margin-top:10px;font-size:11px;color:var(--orange);display:flex;align-items:center;gap:4px;">⚠️ Email manquant — relances inactives</div>`}
+      ${r.email
+        ? `<div style="margin-top:10px;font-size:11px;color:var(--vert);display:flex;align-items:center;gap:4px;">✅ Email configuré — relances actives</div>`
+        : `<div style="margin-top:10px;font-size:11px;color:var(--orange);display:flex;align-items:center;gap:4px;">⚠️ Email manquant — relances inactives</div>`
+      }
     </div>`;
   }).join('');
 }
@@ -1396,6 +1238,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v1.9 — 25/03/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v2.0 — 15/04/2026</div>
 </body>
 </html>
