@@ -976,31 +976,43 @@ function _initEmailJS(){
   emailjs.init(EMAILJS_PUBLIC_KEY);return true;
 }
 
-function envoyerRelance(cellule, nb){
-  const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
-  const email=compte?.email;
-  if(!email){showToast(`Aucun email configuré pour "${cellule}".`,'warning');return;}
+// Récupérer l'email d'un référent depuis Supabase
+async function getEmailReferent(cellule) {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/referents?select=email&cellule=eq.${encodeURIComponent(cellule)}&limit=1`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const rows = await res.json();
+    return rows[0]?.email || '';
+  } catch(e) { return ''; }
+}
+
+async function envoyerRelance(cellule, nb){
   if(!_initEmailJS()) return;
+  showToast('Récupération du contact…');
+  const email = await getEmailReferent(cellule);
+  if(!email){showToast(`Aucun email configuré pour "${cellule}". Renseignez l'onglet Référents.`,'warning');return;}
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
-    to_email: email,cellule: cellule,nb_retard: nb,
-    date: new Date().toLocaleDateString('fr-FR'),lien_gestion: window.location.href
+    to_email: email, cellule: cellule, nb_retard: nb,
+    date: new Date().toLocaleDateString('fr-FR'), lien_gestion: window.location.href
   }).then(()=>showToast(`✅ Relance envoyée à ${email}`,'success'))
     .catch(()=>showToast("Erreur lors de l'envoi du mail",'error'));
 }
 
-function relancerTicket(ticketId, cellule, ecole){
-  const t=allTickets.find(x=>x.id===ticketId);if(!t) return;
-  const compte=Object.values(COMPTES).find(c=>c.cellule===cellule);
-  const email=compte?.email;
-  if(!email){showToast(`Aucun email configuré pour "${cellule}".`,'warning');return;}
+async function relancerTicket(ticketId, cellule, ecole){
+  const t=allTickets.find(x=>x.id===ticketId); if(!t) return;
   if(!_initEmailJS()) return;
+  showToast('Récupération du contact…');
+  const email = await getEmailReferent(cellule);
+  if(!email){showToast(`Aucun email configuré pour "${cellule}". Renseignez l'onglet Référents.`,'warning');return;}
   const ref=t.id.slice(0,8).toUpperCase();
   const delai=calcDelaiJours(t.created_at);
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
-    to_email: email,cellule: cellule,nb_retard: 1,
-    date: new Date().toLocaleDateString('fr-FR'),lien_gestion: window.location.href+'#'+ref,
-    ecole: ecole,ref_ticket: ref,description: t.description||'',
-    priorite: t.priorite||'',nb_jours: delai
+    to_email: email, cellule: cellule, nb_retard: 1,
+    date: new Date().toLocaleDateString('fr-FR'), lien_gestion: window.location.href+'#'+ref,
+    ecole: ecole, ref_ticket: ref, description: t.description||'',
+    priorite: t.priorite||'', nb_jours: delai
   }).then(()=>showToast(`✅ Relance ticket ${ref} envoyée à ${email}`,'success'))
     .catch(()=>showToast("Erreur lors de l'envoi du mail",'error'));
 }
@@ -1238,6 +1250,6 @@ function openLightbox(src){document.getElementById('lb-img').src=src;document.ge
 function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();document.getElementById('confirmOverlay').classList.remove('open');}});
 </script>
-<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v2.0 — 15/04/2026</div>
+<div style="position:fixed;bottom:10px;right:14px;font-size:11px;color:#94a3b8;background:rgba(255,255,255,0.85);padding:3px 8px;border-radius:20px;border:1px solid #e2e8f0;backdrop-filter:blur(4px);z-index:9999;pointer-events:none;">v2.1 — 15/04/2026</div>
 </body>
 </html>
